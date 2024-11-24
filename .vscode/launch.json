@@ -1,0 +1,10 @@
+{
+	"configurations": [
+		{
+			"type": "msedge",
+			"name": "http://localhost:5173/MiniCapstone/",
+			"request": "launch",
+			"url": "http://localhost:5173/MiniCapstone/"
+		}
+	]
+}
