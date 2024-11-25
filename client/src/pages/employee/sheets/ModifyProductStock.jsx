@@ -19,7 +19,11 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-export default function ModifyProductStock({ trigger, productDetails }) {
+export default function ModifyProductStock({
+  trigger,
+  productDetails,
+  refresher,
+}) {
   const {
     userState: { id },
   } = useContext(AuthContext);
@@ -84,8 +88,9 @@ export default function ModifyProductStock({ trigger, productDetails }) {
         className: "text-xs m-6",
         description: `Product Updated Sucessful`,
       });
+      refresher((prevState) => !prevState);
     }
-  }, [updateData?.data]);
+  }, [updateData?.data, refresher]);
   const handleSheetClose = () => {
     resetProductStockQuantity();
     setUpdateError(null);
@@ -117,6 +122,7 @@ export default function ModifyProductStock({ trigger, productDetails }) {
                 <span>{`Product Type: ${productDetails.ProductTypeID}`}</span>
                 <span>{`Product Program: ${productDetails.ProductProgram}`}</span>
                 <span>{`Product Attributes: ${productDetails.P_AttributeValue}`}</span>
+                <span>Product Size : {productDetails.P_AttributeSize}</span>
                 <span>{`Product Price: ${productDetails.P_AttributePrice}`}</span>
               </div>
               <Input

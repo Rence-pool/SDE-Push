@@ -177,7 +177,8 @@ router.post("/post/new_product", upload.single("productImage"), async (req, res)
 
 router.get("/fetch/:productId", (req, res) => {
 	const productId = req.params.productId;
-	database.query("SELECT * FROM Products p INNER JOIN ProductStocks ps ON p.ProductID = ps.ProductID INNER JOIN ProductVariants pv ON pv.ProductVariantID= ps.ProductVariantID INNER JOIN productsizes pz ON ps.ProductSizeID = pz.ProductSizeID  WHERE p.ProductID=?; ", [productId], (err, results) => {
+	database.query(`SELECT * FROM Products pr INNER JOIN ProductAttributes pa ON pa.ProductID  = pr.ProductID  INNER JOIN ProductStocks ps ON ps.P_StockID = pa.P_StockID 
+INNER JOIN productimages pi ON pi.ProductID = pr.ProductID  WHERE pr.ProductID =?;`, [productId], (err, results) => {
 		if (err) {
 			console.error("Error fetching products:", err.stack);
 			res.status(500).send({
@@ -194,8 +195,12 @@ router.get("/fetch/:productId", (req, res) => {
 				product = {
 					ProductID: item.ProductID,
 					ProductName: item.ProductName,
-					ProductDescription: item.ProductDescription,
 					ProductType: item.ProductTypeID,
+					ProductDescription: item.ProductDescription,
+					
+					ProductDefaultPrice: item.ProductDefaultPrice,
+					ProductProgram: item.ProductProgram,
+					ProductImage: item.ProductImage,
 					ProductVariants: [],
 				};
 				acc.push(product);
@@ -203,12 +208,14 @@ router.get("/fetch/:productId", (req, res) => {
 
 			// Add the variant to the product's variants array
 			product.ProductVariants.push({
-				ProductSizeID: item.ProductSizeID,
-				ProductVariantID: item.ProductVariantID,
-				ProductPrice: item.ProductPrice,
-				ProductStockLeft: item.ProductStockLeft,
-				ProductVariantName: item.ProductVariantName,
-				ProductSizeName: item.ProductSizeName,
+				ProductVariant: item.P_AttributeID,
+				ProductVariantName: item.P_AttributeName,
+				ProductVariantValue: item.P_AttributeValue,
+				ProductSize: item.P_AttributeSize,
+				ProductPrice: item.P_AttributePrice,
+				ProductStockID: item.P_StockID,
+				ProductStockLeft: item.Product_StockLeft,
+				ProductStockCondition: item.Product_StockCondition,
 			});
 
 			return acc;

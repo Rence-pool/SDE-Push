@@ -21,6 +21,7 @@ export function useInput(defaultValue, validationFn) {
     handleResetState,
     handleInputChange,
     handleInputBlur,
+    setEnteredValue,
     hasError: didEdit && !valueIsValid,
   };
 }

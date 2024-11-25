@@ -24,7 +24,6 @@ export default function AutProvider({ children }) {
     role: undefined,
   });
   const setUser = (id, role) => {
-    console.log(id, role);
     dispatch({ type: "set_user", payload: { id, role } });
   };
   const returnValue = {

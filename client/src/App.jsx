@@ -17,12 +17,11 @@ import Maintenance from "./pages/admin/Maintenance.jsx";
 import { ThemeProvider } from "./components/ThemeProvider.jsx";
 import EmployeePage from "./pages/employee/EmployeePage.jsx";
 import Cart from "./pages/user/Cart.jsx";
-import Favorites from "./pages/user/Favorites.jsx";
 import ProductCategories from "./pages/user/ProductCategories.jsx";
-import WhatsNew from "./pages/user/WhatsNew.jsx";
 import Home from "./pages/user/Home.jsx";
 import ProtectedRoutes from "./components/ProtectedRoutes.jsx";
 import AuthProvider from "./stores/AutProvider.jsx";
+import ModifyProduct from "./pages/admin/ModifyProduct.jsx";
 export default function App() {
   return (
     <>
@@ -34,16 +33,16 @@ export default function App() {
               <Route path="/" element={<UserPage />}>
                 <Route index element={<Navigate to="home" />} />
                 <Route path="home" element={<Home />} />
-                <Route path="favorites" element={<Favorites />} />
+
                 <Route
-                  path="product-categories"
+                  path="product-categories/:productCategory"
                   element={<ProductCategories />}
                 />
                 <Route
                   path="product_fullDetails/:productId"
                   element={<ProductDetailsUser />}
                 />
-                <Route path="whats-new" element={<WhatsNew />} />
+
                 <Route element={<ProtectedRoutes />}>
                   <Route path="cart/:userId" element={<Cart />} />
                 </Route>
@@ -62,6 +61,10 @@ export default function App() {
                   <Route
                     path="maintenance/add-product"
                     element={<AddProduct />}
+                  />
+                  <Route
+                    path="maintenance/modify-product/:productId"
+                    element={<ModifyProduct />}
                   />
                   <Route path="maintenance" element={<Maintenance />} />
                 </Route>

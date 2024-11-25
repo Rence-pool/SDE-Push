@@ -8,11 +8,11 @@ export const useFetch = (
   const [data, setData] = useState(defaultData);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [triggerRefresh, setTriggerRefresh] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
         const response = await axios.get(url);
 
         const json = await response.data;
@@ -28,7 +28,7 @@ export const useFetch = (
     };
 
     fetchData();
-  }, [url, errorMessage]);
+  }, [url, errorMessage, triggerRefresh]);
 
-  return { data, loading, error, setData,setError };
+  return { data, loading, error, setData,setTriggerRefresh, setError };
 };

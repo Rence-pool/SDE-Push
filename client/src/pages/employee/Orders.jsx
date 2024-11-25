@@ -15,6 +15,7 @@ export default function OrderStatus() {
     data: orderedData,
     loading,
     error,
+    setTriggerRefresh,
   } = useFetch(
     "http://localhost:3000/api/orders/fetch",
     [],
@@ -168,6 +169,7 @@ export default function OrderStatus() {
 
         {!loading && !error && (
           <OrdersTable
+            refresher={setTriggerRefresh}
             data={newOrderedData}
             columns={orderStatusColumn}
             input_search="or_no"

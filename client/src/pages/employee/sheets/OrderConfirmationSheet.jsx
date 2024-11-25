@@ -18,10 +18,17 @@ import CustomSkeleton from "@/components/customs/CustomSkeleton";
 import { getCurrentTime } from "@/lib/functions";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
-import { useContext } from "react"; 
+import { useContext } from "react";
 import { AuthContext } from "@/stores/AutProvider";
-export default function OrderConfirmationSheet({ trigger, content }) {
-  const { user } = useContext(AuthContext);
+export default function OrderConfirmationSheet({
+  trigger,
+  content,
+  refresher,
+}) {
+  const {
+    userState: { id },
+  } = useContext(AuthContext);
+
   const {
     data: updateData,
     loading,
@@ -62,7 +69,7 @@ export default function OrderConfirmationSheet({ trigger, content }) {
       userID: order.s_no,
       postTime: getCurrentTime(),
       newOrderStatus: "ORDER_200",
-      actor: user.id,
+      actor: id,
     };
 
     await updateValue(postSales);
@@ -74,8 +81,9 @@ export default function OrderConfirmationSheet({ trigger, content }) {
         className: "text-xs m-6",
         description: `Order Updated Sucessful`,
       });
+      refresher((prevState) => !prevState);
     }
-  }, [updateData?.data]);
+  }, [updateData?.data, refresher]);
   useEffect(() => {
     if (error) {
       toast("Process Error", {

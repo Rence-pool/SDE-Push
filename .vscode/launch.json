@@ -4,7 +4,8 @@
 			"type": "msedge",
 			"name": "http://localhost:5173/MiniCapstone/",
 			"request": "launch",
-			"url": "http://localhost:5173/MiniCapstone/"
+			"url": "http://localhost:5173/MiniCapstone/",
+			"port": 6666
 		}
 	]
 }

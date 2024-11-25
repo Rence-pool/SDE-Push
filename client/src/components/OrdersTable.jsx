@@ -36,7 +36,12 @@ import TableToPrint from "./TablePrint";
 import OrderConfirmationSheet from "../pages/employee/sheets/OrderConfirmationSheet";
 import MakeOrdersheet from "../pages/employee/sheets/MakeOrdersheet";
 
-export default function OrdersTable({ data, columns, input_search }) {
+export default function OrdersTable({
+  data,
+  columns,
+  input_search,
+  refresher,
+}) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -96,9 +101,11 @@ export default function OrdersTable({ data, columns, input_search }) {
             />
           </div>
           <MakeOrdersheet
+           refresher={refresher}
             trigger={<Button variant="outline">Make Order</Button>}
           />
           <OrderConfirmationSheet
+            refresher={refresher}
             content={rowSelected.map((row) => row.original)}
             trigger={
               <Button

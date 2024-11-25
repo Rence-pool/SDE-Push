@@ -22,8 +22,10 @@ import { formatCurrency } from "@/lib/functions";
 import { useEffect, useState } from "react";
 import { useContext } from "react";
 import { AuthContext } from "@/stores/AutProvider";
-export default function MakeOrdersheet({ trigger }) {
-  const { user } = useContext(AuthContext);
+export default function MakeOrdersheet({ trigger, refresher }) {
+  const {
+    userState: { id },
+  } = useContext(AuthContext);
   const [cart, setCart] = useState([]);
   const handleSheetClose = () => {
     handleProductSearchReset();
@@ -132,7 +134,7 @@ export default function MakeOrdersheet({ trigger }) {
     data.date = getCurrentDate();
     data.time = getCurrentTime();
     data.totalOrder = totalOrder;
-    data.actor = user.id;
+    data.actor = id;
     try {
       console.log("Posting Order", data);
       await postOrder(data);
@@ -147,8 +149,9 @@ export default function MakeOrdersheet({ trigger }) {
         className: "text-xs m-6",
         description: postResponseData?.message,
       });
+      refresher((prevState) => !prevState);
     }
-  }, [postResponseData]);
+  }, [postResponseData, refresher]);
 
   return (
     <Sheet modal onOpenChange={handleSheetClose}>

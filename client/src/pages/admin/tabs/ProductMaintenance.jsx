@@ -98,9 +98,7 @@ export default function ProductMaintenance() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() =>
-                  navigate(`/employee/maintenance/product-details/${productID}`)
-                }
+                onClick={() => navigate(`/admin/maintenance/modify-product/${productID}`)}
               >
                 Modify Product
               </DropdownMenuItem>

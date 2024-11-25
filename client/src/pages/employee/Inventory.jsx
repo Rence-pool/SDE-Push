@@ -11,6 +11,7 @@ export default function Inventory() {
     data: fetchData,
     loading,
     error,
+    setTriggerRefresh,
   } = useFetch("http://localhost:3000/api/products/fetch", []);
   // console.log(fetchData.data);
   const inventoryColumns = [
@@ -113,6 +114,7 @@ export default function Inventory() {
       enableHiding: false,
       cell: ({ row }) => (
         <ModifyProductStock
+          refresher={setTriggerRefresh}
           trigger={<Button variant="outline">Edit Stock</Button>}
           productDetails={row.original}
         />

@@ -42,7 +42,12 @@ export default function LoginPage() {
       >
         Employee Both
       </Link>
-      <Link className="btn" to="/" replace>
+      <Link
+        className="btn"
+        to="/"
+        replace
+        onClick={() => handleOnEmployeeeLogin("STDNT", 2000309926)}
+      >
         User
       </Link>
     </main>
