@@ -121,7 +121,8 @@ export default function ModifyProductStock({
                 <span>{`Product Name: ${productDetails.ProductName}`}</span>
                 <span>{`Product Type: ${productDetails.ProductTypeID}`}</span>
                 <span>{`Product Program: ${productDetails.ProductProgram}`}</span>
-                <span>{`Product Attributes: ${productDetails.P_AttributeValue}`}</span>
+                <span>{`Product At
+                tributes: ${productDetails.P_AttributeValue}`}</span>
                 <span>Product Size : {productDetails.P_AttributeSize}</span>
                 <span>{`Product Price: ${productDetails.P_AttributePrice}`}</span>
               </div>
