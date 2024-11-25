@@ -4,8 +4,8 @@ export default function NotPage() {
   const navigate = useNavigate();
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate("/");
-    }, 1000);
+      navigate("..");
+    }, 5000);
     return () => {
       clearTimeout(timer);
     };

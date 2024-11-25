@@ -39,15 +39,6 @@ export default function OrderConfirmationSheet({
 
   const [orders, setOrders] = useState(content);
 
-  useEffect(() => {
-    setOrders(content);
-  }, [content]);
-
-  useEffect(() => {
-    setOrders((prevState) => {
-      return prevState.filter((order) => order.or_no !== updateData?.data);
-    });
-  }, [updateData?.data]);
   console.log(orders);
   const handleSheetClose = (event) => {
     if (event) return;
@@ -92,6 +83,16 @@ export default function OrderConfirmationSheet({
       });
     }
   }, [error]);
+  useEffect(() => {
+    if (updateData?.data === undefined) {
+      setOrders(content);
+    } else {
+      setOrders((prevState) => {
+        return prevState.filter((order) => order.or_no !== updateData?.data);
+      });
+    }
+  }, [content, updateData?.data]);
+
   return (
     <Sheet modal onOpenChange={handleSheetClose}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
@@ -167,6 +168,7 @@ export default function OrderConfirmationSheet({
                             id={"order-id"}
                             name="order-id"
                             value={order.or_no}
+                            onChange={()=>{}}
                           />
 
                           <Input
@@ -177,6 +179,7 @@ export default function OrderConfirmationSheet({
                             type={"text"}
                             id={"payment-id"}
                             name="payment-id"
+                          
                           />
                           <Input
                             required
@@ -185,6 +188,7 @@ export default function OrderConfirmationSheet({
                             id={"payment-amount"}
                             name="payment-amount"
                             value={order.total}
+                            onChange={()=>{}}
                           />
                           <Input
                             required

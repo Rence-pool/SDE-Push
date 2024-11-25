@@ -14,11 +14,8 @@ export const useFetch = (
     const fetchData = async () => {
       try {
         const response = await axios.get(url);
-
         const json = await response.data;
-        await new Promise((resolve) => setTimeout(resolve, 500));
         setData(json);
-
         setError(null);
       } catch (error) {
         setError({ message: `${error.message} \n ${errorMessage}` });
@@ -30,5 +27,5 @@ export const useFetch = (
     fetchData();
   }, [url, errorMessage, triggerRefresh]);
 
-  return { data, loading, error, setData,setTriggerRefresh, setError };
+  return { data, loading, error, setData, setTriggerRefresh, setError };
 };

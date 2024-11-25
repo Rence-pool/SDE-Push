@@ -1,4 +1,4 @@
 {
-	"prettier.printWidth": 100000000000,
+	"prettier.printWidth": 140,
 	"prettier.proseWrap": "never"
 }

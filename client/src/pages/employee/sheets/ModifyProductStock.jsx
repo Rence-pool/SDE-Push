@@ -10,20 +10,9 @@ import { useContext } from "react";
 import { AuthContext } from "@/stores/AutProvider";
 import { useUpdate } from "@/hooks/useUpdate";
 import { getCurrentDate, getCurrentTime } from "@/lib/functions";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
-export default function ModifyProductStock({
-  trigger,
-  productDetails,
-  refresher,
-}) {
+export default function ModifyProductStock({ trigger, productDetails, refresher }) {
   const {
     userState: { id },
   } = useContext(AuthContext);
@@ -35,10 +24,7 @@ export default function ModifyProductStock({
     handleInputBlur: handleProductStockQuantityBlur,
     hasError: productStockQuantityHasError,
     handleResetState: resetProductStockQuantity,
-  } = useInput(
-    productDetails.Product_StockLeft,
-    (value) => !isNaN(value) && Number(value) > -1 && value !== "-0",
-  );
+  } = useInput(productDetails.Product_StockLeft, (value) => !isNaN(value) && Number(value) > -1 && value !== "-0");
 
   const {
     data: updateData,
@@ -49,11 +35,7 @@ export default function ModifyProductStock({
   } = useUpdate([], "http://localhost:3000/api/products/update/stock/");
   const handleOnFormSubmit = async (e) => {
     e.preventDefault();
-    if (
-      productStockQuantity <= -1 ||
-      productStockQuantityHasError ||
-      productDetails.Product_StockLeft === productStockQuantity
-    ) {
+    if (productStockQuantity <= -1 || productStockQuantityHasError || productDetails.Product_StockLeft === productStockQuantity) {
       return;
     }
     let stockCondition = "high";
@@ -71,17 +53,14 @@ export default function ModifyProductStock({
       productAttributeID: productDetails.P_AttributeID,
       productStockCondition: stockCondition.toUpperCase(),
 
-      actionType:
-        Number(productDetails.Product_StockLeft) > Number(productStockQuantity)
-          ? "Stock Adjustment"
-          : "Stock Replenishment",
+      actionType: Number(productDetails.Product_StockLeft) > Number(productStockQuantity) ? "Stock Adjustment" : "Stock Replenishment",
       update_timeStamp: getCurrentTime(),
       update_dateStamp: getCurrentDate(),
     };
     // console.log(data);
     await updateValue(data);
   };
-  console.log(updateData);
+
   useEffect(() => {
     if (updateData?.data) {
       toast("Product Updated Successfully", {
@@ -98,18 +77,11 @@ export default function ModifyProductStock({
   return (
     <Sheet modal onOpenChange={handleSheetClose}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent
-        className="flex flex-1 flex-col gap-2 outline"
-        onInteractOutside={(event) => event.preventDefault()}
-      >
+      <SheetContent className="flex flex-1 flex-col gap-2 outline" onInteractOutside={(event) => event.preventDefault()}>
         <SheetHeader>
           <SheetTitle>Modify Product Stock</SheetTitle>
           <SheetDescription>
-            <span className="space-x-4">
-              {updateError && (
-                <span className="text-red-500">{updateError.message}</span>
-              )}
-            </span>
+            <span className="space-x-4">{updateError && <span className="text-red-500">{updateError.message}</span>}</span>
           </SheetDescription>
         </SheetHeader>
         <form className="flex h-full flex-col" onSubmit={handleOnFormSubmit}>
@@ -136,10 +108,7 @@ export default function ModifyProductStock({
                 value={productStockQuantity}
               />
 
-              <Button
-                className="w-full"
-                disabled={productStockQuantityHasError || updateLoading}
-              >
+              <Button className="w-full" disabled={productStockQuantityHasError || updateLoading}>
                 Save
               </Button>
             </ScrollArea>
@@ -152,4 +121,5 @@ export default function ModifyProductStock({
 ModifyProductStock.propTypes = {
   trigger: PropTypes.any,
   productDetails: PropTypes.object,
+  refresher: PropTypes.func,
 };

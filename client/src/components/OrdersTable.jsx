@@ -1,19 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuCheckboxItem,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 import CustomSelect from "@/components/customs/CustomSelect";
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  getSortedRowModel,
-  getFilteredRowModel,
-} from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, useReactTable, getSortedRowModel, getFilteredRowModel } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
 import PropTypes from "prop-types";
 import CustomTable from "./table/CustomTable";
@@ -36,12 +25,7 @@ import TableToPrint from "./TablePrint";
 import OrderConfirmationSheet from "../pages/employee/sheets/OrderConfirmationSheet";
 import MakeOrdersheet from "../pages/employee/sheets/MakeOrdersheet";
 
-export default function OrdersTable({
-  data,
-  columns,
-  input_search,
-  refresher,
-}) {
+export default function OrdersTable({ data, columns, input_search, refresher }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -63,12 +47,7 @@ export default function OrdersTable({
       rowSelection,
     },
   });
-  const {
-    data: updateData,
-    loading,
-    error,
-    updateValue,
-  } = useUpdate([], "http://localhost:3000/api/orders/update/status/");
+  const { data: updateData, loading, error, updateValue } = useUpdate([], "http://localhost:3000/api/orders/update/status/");
   const rowSelected = table.getSelectedRowModel()?.rows;
 
   return (
@@ -78,9 +57,7 @@ export default function OrdersTable({
           <Input
             placeholder="Filter Order"
             value={table.getColumn(input_search)?.getFilterValue() ?? ""}
-            onChange={(event) =>
-              table.getColumn(input_search)?.setFilterValue(event.target.value)
-            }
+            onChange={(event) => table.getColumn(input_search)?.setFilterValue(event.target.value)}
             className="flex-1"
           />
 
@@ -94,16 +71,11 @@ export default function OrdersTable({
                 { label: "Failed", value: "ORDER_400" },
               ]}
               onItemSelected={(value) => {
-                table
-                  .getColumn("status")
-                  ?.setFilterValue(value === "all" ? "" : value);
+                table.getColumn("status")?.setFilterValue(value === "all" ? "" : value);
               }}
             />
           </div>
-          <MakeOrdersheet
-           refresher={refresher}
-            trigger={<Button variant="outline">Make Order</Button>}
-          />
+          <MakeOrdersheet refresher={refresher} trigger={<Button variant="outline">Make Order</Button>} />
           <OrderConfirmationSheet
             refresher={refresher}
             content={rowSelected.map((row) => row.original)}
@@ -112,11 +84,7 @@ export default function OrdersTable({
                 variant="outline"
                 disabled={
                   rowSelected.length === 0 ||
-                  rowSelected.filter(
-                    (row) =>
-                      row.original.status === "ORDER_200" ||
-                      row.original.status === "ORDER_400",
-                  ).length >= 1
+                  rowSelected.filter((row) => row.original.status === "ORDER_200" || row.original.status === "ORDER_400").length >= 1
                 }
               >
                 Mark Success
@@ -125,12 +93,7 @@ export default function OrdersTable({
           />
 
           <PDFDownloadLink
-            document={
-              <TableToPrint
-                data={data}
-                currentDate={format(getCurrentDate(), "MMMM dd, y")}
-              />
-            }
+            document={<TableToPrint data={data} currentDate={format(getCurrentDate(), "MMMM dd, y")} />}
             fileName={`Orders of ${format(getCurrentDate(), "MMMM dd, y")}.pdf`}
           >
             {({ loading }) => (
@@ -157,9 +120,7 @@ export default function OrdersTable({
                     key={column.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
+                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
@@ -168,7 +129,7 @@ export default function OrdersTable({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex h-[36rem] overflow-hidden rounded-md bg-white 2xl:h-[48rem]">
+      <div className="flex h-[35rem] overflow-hidden rounded-md bg-white 2xl:h-[48rem]">
         <CustomTable columns={columns} table={table} flexRender={flexRender} />
       </div>
     </div>

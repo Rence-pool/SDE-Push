@@ -10,14 +10,14 @@ import ActivityHistory from "./pages/admin/ActivityHistory.jsx";
 import Orders from "./pages/employee/Orders.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import ProductDetails from "./pages/admin/ProductDetails.jsx";
-import ProductDetailsUser from "./pages/user/ProductDetails.jsx";
+import ProductInformation from "./pages/user/ProductInformation.jsx";
 import { Toaster } from "@/components/ui/sonner";
 import OrderDetails from "./pages/admin/OrderDetails.jsx";
 import Maintenance from "./pages/admin/Maintenance.jsx";
 import { ThemeProvider } from "./components/ThemeProvider.jsx";
 import EmployeePage from "./pages/employee/EmployeePage.jsx";
 import Cart from "./pages/user/Cart.jsx";
-import ProductCategories from "./pages/user/ProductCategories.jsx";
+import Products from "./pages/user/Products.jsx";
 import Home from "./pages/user/Home.jsx";
 import ProtectedRoutes from "./components/ProtectedRoutes.jsx";
 import AuthProvider from "./stores/AutProvider.jsx";
@@ -33,16 +33,8 @@ export default function App() {
               <Route path="/" element={<UserPage />}>
                 <Route index element={<Navigate to="home" />} />
                 <Route path="home" element={<Home />} />
-
-                <Route
-                  path="product-categories/:productCategory"
-                  element={<ProductCategories />}
-                />
-                <Route
-                  path="product_fullDetails/:productId"
-                  element={<ProductDetailsUser />}
-                />
-
+                <Route path="products/:productCategory" element={<Products />} />
+                <Route path="product/:productId" element={<ProductInformation />} />
                 <Route element={<ProtectedRoutes />}>
                   <Route path="cart/:userId" element={<Cart />} />
                 </Route>
@@ -50,42 +42,21 @@ export default function App() {
               <Route element={<ProtectedRoutes />}>
                 <Route path="/admin" element={<AdminPage />}>
                   <Route index element={<Navigate to="maintenance" />} />
-                  <Route
-                    path="activity-history"
-                    element={<ActivityHistory />}
-                  />
-                  <Route
-                    path="maintenance/product-details/:productId"
-                    element={<ProductDetails />}
-                  />
-                  <Route
-                    path="maintenance/add-product"
-                    element={<AddProduct />}
-                  />
-                  <Route
-                    path="maintenance/modify-product/:productId"
-                    element={<ModifyProduct />}
-                  />
+                  <Route path="activity-history" element={<ActivityHistory />} />
+                  <Route path="maintenance/product-details/:productId" element={<ProductDetails />} />
+                  <Route path="maintenance/add-product" element={<AddProduct />} />
+                  <Route path="maintenance/modify-product/:productId" element={<ModifyProduct />} />
                   <Route path="maintenance" element={<Maintenance />} />
                 </Route>
                 <Route path="/employee" element={<EmployeePage />}>
                   <Route index element={<Navigate to="dashboard" />} />
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="orders" element={<Orders />} />
-                  <Route path="inventory" element={<Inventory />}></Route>
+                  <Route path="inventory" element={<Inventory />} />
                   <Route path="sales-history" element={<SalesHistory />} />
-                  <Route
-                    path="activity-history"
-                    element={<ActivityHistory />}
-                  />
-                  <Route
-                    path="inventory/product-details/:productId"
-                    element={<ProductDetails />}
-                  />
-                  <Route
-                    path="orders/order-details/:orderId"
-                    element={<OrderDetails />}
-                  />
+                  <Route path="activity-history" element={<ActivityHistory />} />
+                  <Route path="inventory/product-details/:productId" element={<ProductDetails />} />
+                  <Route path="orders/order-details/:orderId" element={<OrderDetails />} />
                 </Route>
               </Route>
               <Route path="/login" element={<LoginPage />} />
