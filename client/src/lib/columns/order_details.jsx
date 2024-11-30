@@ -1,40 +1,11 @@
-import { formatCurrency } from "@/lib/functions";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowUpDown } from "lucide-react";
+import { formatCurrency } from "@/lib/functions";
+
 export const columnsOrderDetailsColumns = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: "ProductName",
-    header: ({ column }) => {
-      return (
-        <div className="flex justify-center">
-          <Button
-            variant="ghost"
-            onClick={() => {
-              column.toggleSorting(column.getIsSorted() === "asc");
-              console.log(column.getIsSorted());
-            }}
-          >
-            Product Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-      );
+    header: () => {
+      return <div className="flex justify-center">Product Name</div>;
     },
   },
   {
@@ -86,7 +57,6 @@ export const columnsOrderDetailsColumns = [
       );
     },
   },
-
   {
     accessorKey: "Total",
     header: () => <div className="text-center">Total</div>,
@@ -95,6 +65,18 @@ export const columnsOrderDetailsColumns = [
 
       const formatted = formatCurrency(total);
       return <div className="text-left font-medium">{formatted}</div>;
+    },
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const orderNumber = row.getValue("OrderID");
+      return (
+        <div className="z-0 flex items-center justify-center space-x-5">
+          <Button variant="outline">Defected Item </Button>
+        </div>
+      );
     },
   },
 ];

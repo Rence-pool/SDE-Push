@@ -1,8 +1,8 @@
-import { formatCurrency } from "@/lib/functions";
+
 import SalesHistoryTable from "@/components/table/SalesHistoryTable";
 import { useFetch } from "@/hooks/useFetch";
 import CustomSkeleton from "@/components/customs/CustomSkeleton";
-import DashboardCalendar from "@/components/DashboardCalendar";
+import DashboardCalendar from "@/components/DateRangePicker";
 
 import { useState } from "react";
 import { getCurrentDate } from "@/lib/functions";
@@ -29,15 +29,7 @@ export default function SalesHistory() {
         {error && <div className="m-auto text-2xl text-white">Error: {error.message}</div>}
 
         {!loading && !error && (
-          <>
-            <SalesHistoryTable data={salesHistoyData.data} columns={salesHistoryColumns} input_search="OrderID" />
-            <div className="flex flex-1">
-              <span className="m-5 flex-1 text-xl font-semibold uppercase text-white">Row Count: {salesHistoyData?.data?.length}</span>
-              <span className="m-5 text-2xl font-semibold uppercase text-white">
-                Total: {formatCurrency(salesHistoyData?.data[0]?.TotalSales === undefined ? "0.00" : salesHistoyData?.data[0]?.TotalSales)}
-              </span>
-            </div>
-          </>
+          <SalesHistoryTable date={date} data={salesHistoyData.data} columns={salesHistoryColumns} input_search="OrderID" />
         )}
       </div>
     </section>

@@ -1,29 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuCheckboxItem,
-} from "@/components/ui/dropdown-menu";
-import CustomSelect from "@/components/customs/CustomSelect";
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  getSortedRowModel,
-  getFilteredRowModel,
-} from "@tanstack/react-table";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
+import { flexRender, getCoreRowModel, useReactTable, getSortedRowModel, getFilteredRowModel } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
 import PropTypes from "prop-types";
 import CustomTable from "./CustomTable";
-import { useUpdate } from "@/hooks/useUpdate";
 
-export default function OrderDetailsTable({
-  data,
-  columns,
-  input_search = "s_name",
-}) {
+export default function OrderDetailsTable({ data, columns, input_search = "s_name" }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -45,13 +28,6 @@ export default function OrderDetailsTable({
       rowSelection,
     },
   });
-  const {
-    data: updateData,
-    loading,
-    error,
-    updateValue,
-  } = useUpdate([], "http://localhost:3000/api/orders/update/status/");
-
   return (
     <div className="z-0 flex flex-1 flex-col text-black">
       <div className="m-4 flex items-center gap-5">
@@ -59,9 +35,7 @@ export default function OrderDetailsTable({
           <Input
             placeholder="Filter Order"
             value={table.getColumn(input_search)?.getFilterValue() ?? ""}
-            onChange={(event) =>
-              table.getColumn(input_search)?.setFilterValue(event.target.value)
-            }
+            onChange={(event) => table.getColumn(input_search)?.setFilterValue(event.target.value)}
             className="flex-1"
           />
         </div>
@@ -82,9 +56,7 @@ export default function OrderDetailsTable({
                     key={column.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
+                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
@@ -93,7 +65,7 @@ export default function OrderDetailsTable({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex h-[30rem] overflow-hidden rounded-md bg-white">
+      <div className="flex h-[17rem] overflow-hidden rounded-md bg-white">
         <CustomTable columns={columns} table={table} flexRender={flexRender} />
       </div>
     </div>

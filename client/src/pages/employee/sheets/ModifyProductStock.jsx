@@ -101,7 +101,7 @@ export default function ModifyProductStock({ trigger, productDetails, refresher 
               <Input
                 type={"text"}
                 id={"product-stock-quantity"}
-                placeholder={"Replenish Stock"}
+                placeholder={"Adjust Product Stock Quantity"}
                 isError={productStockQuantityHasError}
                 onChange={handleProductStockQuantityChange}
                 onBlur={handleProductStockQuantityBlur}

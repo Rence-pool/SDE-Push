@@ -60,7 +60,9 @@ export default function AddProductForm({ onSubmitPost }) {
       className="flex flex-col gap-2 px-2 text-black"
     >
       {errors && errors.root && <div className="text-white">{errors.root.message}</div>}
-      {fetchError && <CustomSkeleton key={100} />}\{fetchError && <div className="text-error">{fetchError.message}</div>}
+      {fetchLoading && <CustomSkeleton key={100} />}
+
+      {fetchError && <div className="text-error">{fetchError.message}</div>}
       {!fetchLoading && !fetchError && (
         <>
           <Input

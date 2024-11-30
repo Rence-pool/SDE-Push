@@ -3,10 +3,15 @@ import { useFetch } from "@/hooks/useFetch";
 import CustomSkeleton from "@/components/customs/CustomSkeleton";
 
 import InventoryTable from "@/components/table/InventoryTable";
+import { useLocation } from "react-router-dom";
 
 import { inventoryColumns } from "@/lib/columns/inventory";
 export default function Inventory() {
   const { data, loading, error, setTriggerRefresh } = useFetch("http://localhost:3000/api/products/fetch", []);
+
+  const location = useLocation();
+  const { stockCondition } = location.state || "";
+
 
   const fetchData = data.data === undefined ? [] : data.data;
   return (
@@ -25,7 +30,12 @@ export default function Inventory() {
               )}
 
               {!loading && !error && (
-                <InventoryTable data={fetchData} columns={inventoryColumns(setTriggerRefresh)} input_search="ProductName" />
+                <InventoryTable
+                  stockCondition={stockCondition}
+                  data={fetchData}
+                  columns={inventoryColumns(setTriggerRefresh)}
+                  input_search="ProductName"
+                />
               )}
             </div>
           </ScrollArea>

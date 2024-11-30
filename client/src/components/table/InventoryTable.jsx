@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CustomSkeleton from "@/components/customs/CustomSkeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 
@@ -9,7 +9,8 @@ import CustomTable from "./CustomTable";
 import CustomSelect from "../customs/CustomSelect";
 import { flexRender, getCoreRowModel, useReactTable, getSortedRowModel, getFilteredRowModel } from "@tanstack/react-table";
 import { useFetch } from "@/hooks/useFetch";
-export default function InventoryTable({ data, columns: initialColumns, input_search }) {
+
+export default function InventoryTable({ stockCondition, data, columns: initialColumns, input_search }) {
   const columns = initialColumns.map((column) => {
     if (column.accessorKey === "P_AttributeValue") {
       return {
@@ -34,6 +35,7 @@ export default function InventoryTable({ data, columns: initialColumns, input_se
   } = useFetch("http://localhost:3000/api/products/fetch/product-info", [], "Error fetching Products");
   let productTypes = [{ label: "All", value: "all" }];
   let productProgram = [];
+  let productVariants = [];
   if (product_info?.data?.length > 0) {
     productTypes = product_info.data[0]?.map((type) => ({
       label: type.ProductTypename,
@@ -45,6 +47,11 @@ export default function InventoryTable({ data, columns: initialColumns, input_se
       value: type.ProgramID,
     }));
     productProgram.unshift({ label: "Programs", value: "all" });
+    productVariants = product_info.data[2]?.map((type) => ({
+      label: type.P_AttributeValue,
+      value: type.P_AttributeValue,
+    }));
+    productVariants.unshift({ label: "Variants", value: "all" });
   }
 
   const table = useReactTable({
@@ -61,6 +68,9 @@ export default function InventoryTable({ data, columns: initialColumns, input_se
     },
   });
 
+  useEffect(() => {
+    table.getColumn("Product_StockCondition")?.setFilterValue(stockCondition);
+  }, [table, stockCondition]);
   return (
     <div className="flex flex-1 flex-col">
       <div className="m-4 flex items-center gap-5">
@@ -97,13 +107,8 @@ export default function InventoryTable({ data, columns: initialColumns, input_se
           </div>
           <div className="min-w-32">
             <CustomSelect
-              label="Genders"
-              options={[
-                { label: "Genders", value: "all" },
-
-                { label: "Male", value: "MALE" },
-                { label: "Female", value: "FEMALE" },
-              ]}
+              label="Variants"
+              options={productVariants}
               onItemSelected={(value) => {
                 table.getColumn("P_AttributeValue")?.setFilterValue(value === "all" ? "" : value);
               }}
@@ -112,6 +117,7 @@ export default function InventoryTable({ data, columns: initialColumns, input_se
           <div className="min-w-40">
             <CustomSelect
               label="Stock Level"
+              defaultValue={stockCondition}
               options={[
                 { label: "Stock Level", value: "all" },
                 { label: "High", value: "HIGH" },
@@ -163,4 +169,5 @@ InventoryTable.propTypes = {
   data: PropTypes.array,
   columns: PropTypes.array,
   input_search: PropTypes.string,
+  stockCondition: PropTypes.string,
 };

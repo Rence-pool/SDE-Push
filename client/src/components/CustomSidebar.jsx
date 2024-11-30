@@ -16,9 +16,11 @@ import PropTypes from "prop-types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSidebar } from "@/components/ui/sidebar";
 import MYAVATAR from "../assets/avatar.jpg";
-export default function AdminSideBar({ sidebarContent, userRole }) {
+
+export default function CustomSidebar({ sidebarContent, userID }) {
   const navigate = useNavigate();
   const { open } = useSidebar();
+
   return (
     <Sidebar className="border-r" collapsible="icon">
       <DialogTitle className="sr-only">Navigation Menu</DialogTitle>
@@ -36,7 +38,7 @@ export default function AdminSideBar({ sidebarContent, userRole }) {
                         <AvatarFallback>AD</AvatarFallback>
                       </Avatar>
                       <div className="flex flex-1 items-center justify-between group-data-[collapsible=icon]:hidden">
-                        <span className="text-sm font-medium">{userRole}</span>
+                        <span className="text-sm font-medium">{userID}</span>
                         <ChevronDown className="h-4 w-4" />
                       </div>
                     </div>
@@ -77,7 +79,7 @@ export default function AdminSideBar({ sidebarContent, userRole }) {
     </Sidebar>
   );
 }
-AdminSideBar.propTypes = {
+CustomSidebar.propTypes = {
   sidebarContent: PropTypes.array,
-  userRole: PropTypes.string,
+  userID: PropTypes.string,
 };

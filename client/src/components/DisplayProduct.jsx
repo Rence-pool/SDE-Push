@@ -15,7 +15,7 @@ export default function DisplayProduct({ item }) {
           className="h-auto rounded-xl object-contain lg:h-[15rem]"
         />
       </figure>
-      <div className="card-body px-0.5 text-center lg:px-2" onClick={() => navigate(`/product_fullDetails/${item.ProductID}`)}>
+      <div className="card-body px-0.5 text-center lg:px-2" onClick={() => navigate(`/product/${item.ProductID}`)}>
         <div className="card-title text-start">
           <h2 className="flex-1 text-start text-xs font-semibold lg:text-lg">{item.ProductName}</h2>
         </div>

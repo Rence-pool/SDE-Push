@@ -45,7 +45,7 @@ router.get("/fetch", (req, res) => {
 				order.Program.push(item.UserVariantValue);
 			}
 			if (item.OrderID === order.OrderID) {
-				console.log(order.Order.OrderBreakDown);
+			
 				const exists = order.Order.OrderBreakDown.some(
 					(existingItem) =>
 						existingItem.ProductID === item.ProductID &&
@@ -67,7 +67,7 @@ router.get("/fetch", (req, res) => {
 			}
 			return acc;
 		}, []);
-		// console.log("48", resultWithVariant);
+		
 
 		database.query(
 			`SELECT COUNT(*)
@@ -109,7 +109,7 @@ WHERE OrderStatusID = 'ORDER_600'
 	});
 });
 
-router.post("/post_order", (req, res) => {
+router.post("/post_order", async (req, res) => {
 	if (!req.body) {
 		return res.status(400).json({ message: "No data received" });
 	}
@@ -117,43 +117,106 @@ router.post("/post_order", (req, res) => {
 
 	const { name, studentId, date, time, orders, totalOrder, actor } = req.body;
 	const orderID = `${studentId}_${date}_${time}`;
-	const insertOrder = "INSERT INTO Orders (OrderID,OrderStatusID,OrderDate,UserID,TotalOrder,Sales) VALUES (?,?,?,?,?,?)";
-	database.query(insertOrder, [orderID, "ORDER_600", `${date} ${time}`, studentId, totalOrder, 0], (err) => {
-		if (err) {
-			console.log(err);
-			return res.status(500).json({
-				message: "Internal Server Error",
-				data: null,
-			});
-		}
-		const insertOrderBreakdown = "INSERT INTO OrderBreakdown(OrderID,UserID,ProductID,P_AttributeID,OrderQuantity,Total) VALUES (?,?,?,?,?,?)";
-		orders.forEach((order) => {
-			database.query(insertOrderBreakdown, [orderID, studentId, order.ProductID, order.P_AttributeID, order.quantity, order.quantity * order.P_AttributePrice], (err) => {
-				if (err) {
-					console.log(err);
-					return res.status(500).json({
-						message: "Internal Server Error",
-						data: null,
+
+	const validOrder = [];
+
+	try{
+		        // Loop through each order and process asynchronously
+				const checkOrders = orders.map(async (order) => {
+					// Return a promise from the database query to wait for it
+					const result = await new Promise((resolve, reject) => {
+						database.query('SELECT Product_StockLeft FROM productstocks WHERE P_StockID=?', [order.P_StockID], (err, result) => {
+							if (err) reject(err);
+							resolve(result);
+						});
 					});
-				}
-			});
-		});
-		const insertActivityHistory = "INSERT INTO ActivityHistory (ActivityTitle,ActivityContent,ActivityDateTime,ActivityActor,ActivityType) VALUES (?,?,?,?,?)";
-		database.query(insertActivityHistory, [`Order Placed`, `${name} has placed an order for a total of ${totalOrder} items on ${date} ${time}`, `${date} ${time}`, actor, "ORDER"], (err) => {
-			if (err) {
-				console.log(err);
-				return res.status(500).json({
-					message: "Internal Server Error",
-					data: null,
+		
+					// Check if the stock is available and push the valid orders to the validOrder array
+					if (result[0].Product_StockLeft >= order.quantity) {
+						validOrder.push(Number(result[0].Product_StockLeft));
+					}
 				});
-			}
+		
+				// Wait for all orders to be processed
+				await Promise.all(checkOrders);
+
+				if(validOrder.length !== orders.length ){
+					throw new Error("Your Order is not processed, Please try again with different product quantity");
+				}
+				validOrder.forEach((value,index)=>{
+						if(value < orders[index].quantity)
+							throw new Error("Your Order is not processed, Please try again with different product quantity");
+				})
+				
+					// Order Quantity Validated
+					const insertOrder = "INSERT INTO Orders (OrderID,OrderStatusID,OrderDate,UserID,TotalOrder,Sales) VALUES (?,?,?,?,?,?)";
+					database.query(insertOrder, [orderID, "ORDER_600", `${date} ${time}`, studentId, totalOrder, 0], (err) => {
+						if (err) {
+							console.log(err);
+							return res.status(500).json({
+								message: "Internal Server Error",
+								data: null,
+							});
+						}
+						const insertOrderBreakdown = "INSERT INTO OrderBreakdown(OrderID,UserID,ProductID,P_AttributeID,OrderQuantity,Total) VALUES (?,?,?,?,?,?)";
+						const updateProductStock ='UPDATE productstocks SET  Product_StockLeft = Product_StockLeft - ?, Product_StockCondition=? WHERE P_StockID=?';
+
+
+						orders.forEach((order,index) => {
+							let stockCondition = "high";
+
+							if ((validOrder[index]- order.quantity ) === 0) stockCondition = "out of stock";
+							else if (( validOrder[index]-order.quantity ) <= 10) stockCondition = "low"; 
+							else if ((validOrder[index]- order.quantity ) <= 20) stockCondition = "medium";
+
+							console.log(stockCondition);
+							console.log(order.quantity);
+							console.log(validOrder[index]- order.quantity );
+
+							database.query(updateProductStock,[order.quantity,stockCondition.toUpperCase(),order.P_StockID],(err)=>{
+								if(err){
+									console.log(err);
+									return res.status(500).json({
+										message: "Internal Server Error",
+										data: null,
+									});
+								}
+							});
+							database.query(insertOrderBreakdown, [orderID, studentId, order.ProductID, order.P_AttributeID, order.quantity, order.quantity * order.P_AttributePrice], (err) => {
+								if (err) {
+									console.log(err);
+									return res.status(500).json({
+										message: "Internal Server Error",
+										data: null,
+									});
+								}
+							});
+						});
+						const insertActivityHistory = "INSERT INTO ActivityHistory (ActivityTitle,ActivityContent,ActivityDateTime,ActivityActor,ActivityType) VALUES (?,?,?,?,?)";
+						database.query(insertActivityHistory, [`Order Placed`, `${name} has placed an order for a total of ${totalOrder} items on ${date} ${time}`, `${date} ${time}`, actor, "ORDER"], (err) => {
+							if (err) {
+								console.log(err);
+								return res.status(500).json({
+									message: "Internal Server Error",
+									data: null,
+								});
+							}
+						});
+					
+						return res.status(200).json({
+							message: "Order Placed",
+							data: "Data",
+						});
+					});
+				
+			
+	}	catch(err){
+		return res.status(500).json({
+			error: err.message,
 		});
-		console.log("here");
-		return res.status(200).json({
-			message: "Order Placed",
-			data: "Data",
-		});
-	});
+	}
+
+	
 });
 router.put("/update/status/:orderID", (req, res) => {
 	const { orderID } = req.params;
@@ -205,7 +268,7 @@ router.get("/fetch/:orderId", (req, res) => {
 			});
 			return;
 		}
-		console.log("Fetched orders:", results);
+	
 		const resultWithVariant = results.reduce((acc, item) => {
 			// Find the existing order using the OrderID
 			let order = acc.find((o) => o.OrderID === item.OrderID && o.P_AttributeID === item.P_AttributeID);
@@ -229,7 +292,7 @@ router.get("/fetch/:orderId", (req, res) => {
 
 			return acc;
 		}, []);
-		console.log("Result with Variant", resultWithVariant);
+	
 		// console.log("Result ", results);
 		res.status(200).send({
 			data: resultWithVariant,

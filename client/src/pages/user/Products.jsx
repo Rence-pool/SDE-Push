@@ -13,16 +13,26 @@ export default function Products() {
   const navigate = useNavigate();
   return (
     <main className="flex flex-1 flex-col overflow-hidden rounded-t-2xl bg-white text-black">
-      <section className="flex items-center justify-center gap-5 p-5">
+      <section className="m-5 flex gap-5 p-5 outline">
         <span className="text-2xl font-bold uppercase">{productCategory}</span>
-        <CustomSelect label="product Types" options={navigationOptions} onItemSelected={(value) => navigate(`/products/${value}`)} />
+        <div className="flex">
+          <CustomSelect label="product Types" options={navigationOptions} onItemSelected={(value) => navigate(`/products/${value}`)} />
+        </div>
       </section>
       <span className="divider" />
       <ScrollArea className="h-[33rem]">
         <div className="flex flex-wrap justify-evenly gap-5">
           {loading && <CustomSkeleton times={50} />}
           {error && <div className="m-auto text-xs">Error: {error.message}</div>}
-          {!error && !loading && data.data.map((item) => <DisplayProduct key={item.ProductID} item={item} />)}
+          <ul className="flex flex-wrap justify-evenly gap-5">
+            {!error &&
+              !loading &&
+              data.data.map((item) => (
+                <li key={item.ProductID} className="flex gap-2">
+                  <DisplayProduct key={item.ProductID} item={item} />
+                </li>
+              ))}
+          </ul>
         </div>
       </ScrollArea>
     </main>

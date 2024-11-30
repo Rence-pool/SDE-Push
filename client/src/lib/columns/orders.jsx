@@ -4,6 +4,8 @@ import { ArrowUpDown } from "lucide-react";
 import { format } from "date-fns";
 import { formatCurrency } from "@/lib/functions";
 import { Link } from "react-router-dom";
+import ReceiptPrint from "@/components/ReceiptPrint";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 export const ordersColumns = [
   {
     id: "select",
@@ -88,11 +90,18 @@ export const ordersColumns = [
       const orderNumber = row.getValue("or_no");
 
       return (
-        <div className="flex items-center justify-center space-x-5">
+        <div className="z-0 flex items-center justify-center space-x-5">
           <Link to={`/employee/orders/order-details/${orderNumber}`}>
             <Button variant="outline">View Order Details</Button>
           </Link>
-          <Button variant="outline">Order Receipt (PDF)</Button>
+
+          <PDFDownloadLink document={<ReceiptPrint data={row.original} />} fileName={`Receipt of ${orderNumber}.pdf`}>
+            {({ loading, error }) => (
+              <Button variant="outline" disabled={loading} className="z-10 disabled:z-0">
+                {loading ? "Loading document..." : error ? "Error" : "Order Breakdown PDF"}
+              </Button>
+            )}
+          </PDFDownloadLink>
         </div>
       );
     },

@@ -10,44 +10,15 @@ export default function LoginPage() {
   return (
     <main className="bg-primary text-accent flex h-screen flex-1 flex-col gap-3 overflow-hidden p-5 lg:flex-col">
       <span> LoginPage</span>
-      <Link
-        className="btn"
-        to="/admin"
-        onClick={() => handleOnEmployeeeLogin("ADMN", 5)}
-        replace
-      >
+      <Link className="btn" to="/admin" onClick={() => handleOnEmployeeeLogin("ADMN", 66677)} replace>
         Admin
       </Link>
-      <Link
-        className="btn"
-        to="/employee"
-        onClick={() => handleOnEmployeeeLogin("PROWARE", 57732)}
-        replace
-      >
+
+      <Link className="btn" to="/employee" onClick={() => handleOnEmployeeeLogin("PROWARE", 5)} replace>
         Employee Proware
       </Link>
-      <Link
-        className="btn"
-        to="/employee"
-        onClick={() => handleOnEmployeeeLogin("PAMO", 66677)}
-        replace
-      >
-        Employee Pamo
-      </Link>
-      <Link
-        className="btn"
-        to="/employee"
-        onClick={() => handleOnEmployeeeLogin("PR&PAMO", 5)}
-        replace
-      >
-        Employee Both
-      </Link>
-      <Link
-        className="btn"
-        to="/"
-        replace
-        onClick={() => handleOnEmployeeeLogin("STDNT", 2000309926)}
-      >
+
+      <Link className="btn" to={"/"} onClick={() => handleOnEmployeeeLogin("STDNT", 2000309926)}>
         User
       </Link>
     </main>

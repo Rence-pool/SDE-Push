@@ -1,27 +1,16 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuCheckboxItem,
-} from "@/components/ui/dropdown-menu";
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  getSortedRowModel,
-  getFilteredRowModel,
-} from "@tanstack/react-table";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
+import { flexRender, getCoreRowModel, useReactTable, getSortedRowModel, getFilteredRowModel } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
 import PropTypes from "prop-types";
 import CustomTable from "./CustomTable";
+import DynamicTableToPrintPDF from "../DynamicTableToPrintPDF";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
-export default function SalesHistoryTable({
-  data,
-  columns,
-  input_search = "or_no",
-}) {
+import { formatCurrency } from "@/lib/functions";
+import { filterDate } from "@/lib/filterDate";
+export default function SalesHistoryTable({ date, data, columns, input_search = "or_no" }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -51,76 +40,26 @@ export default function SalesHistoryTable({
           <Input
             placeholder="Search Order Number"
             value={table.getColumn(input_search)?.getFilterValue() ?? ""}
-            onChange={(event) =>
-              table.getColumn(input_search)?.setFilterValue(event.target.value)
-            }
+            onChange={(event) => table.getColumn(input_search)?.setFilterValue(event.target.value)}
             className="flex-1"
           />
-
-          <Button
-            variant="outline"
-            className="ml-auto"
-            onClick={() => {
-              const printWindow = window.open("");
-              printWindow.document.write(`
-                  <html>
-                    <head>
-                      <title>Print Table</title>
-                      <style>
-                       @media print {
-                          @page {
-                           size: landscape;  /* or 'portrait' for portrait orientation */
-                           margin: 15mm;    /* Add margins as needed */
-                        }
-                      }
-                        table {
-                          border-collapse: collapse;
-                          width: 100%;
-                        }
-                        th, td {
-                          border: 1px solid black;
-                          padding: 8px;
-                          text-align: left;
-                        }
-                        th {
-                          background-color: #f2f2f2;
-                        }
-                      </style>
-                    </head>
-                    <body>
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>Order Date</th>
-                            <th>Order Number</th>
-                            <th>Sales</th>
-                            <th>Total</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          ${data
-                            .map(
-                              (row) => `
-                            <tr>
-                              <td>${row.or_date}</td>
-                              <td>${row.or_no}</td>
-                              <td>${row.sales}</td>
-                              <td>${row.total}</td>
-                            </tr>
-                          `,
-                            )
-                            .join("")}
-                        </tbody>
-                      </table>
-                    </body>
-                  </html>
-                `);
-              printWindow.document.close();
-              printWindow.print();
-            }}
+          <PDFDownloadLink
+            document={
+              <DynamicTableToPrintPDF
+                date={filterDate(date)}
+                data={data}
+                title={"Sales Report"}
+                columns={columns.filter((column) => column?.id !== "actions")}
+              />
+            }
+            fileName={`Sales of ${filterDate(date)}.pdf`}
           >
-            Report
-          </Button>
+            {({ loading, error }) => (
+              <Button variant="outline" disabled={loading} className="ml-auto">
+                {loading ? "Loading document..." : error ? "Error" : "Download Sales Report"}
+              </Button>
+            )}
+          </PDFDownloadLink>
         </div>
 
         <DropdownMenu>
@@ -139,9 +78,7 @@ export default function SalesHistoryTable({
                     key={column.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
+                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
@@ -150,13 +87,14 @@ export default function SalesHistoryTable({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex h-[28rem] overflow-hidden rounded-md bg-white">
-        <CustomTable
-          columns={columns}
-          table={table}
-          flexRender={flexRender}
-          filter
-        />
+      <div className="flex h-[33rem] flex-col overflow-hidden rounded-md bg-white">
+        <CustomTable columns={columns} table={table} flexRender={flexRender} filter />
+        <div className="flex flex-1 items-center justify-center p-5 text-black">
+          <span className="flex-1 text-xl font-semibold uppercase">Row Count: {data?.length}</span>
+          <span className="text-2xl font-semibold uppercase">
+            Total: {formatCurrency(data[0]?.TotalSales === undefined ? "0.00" : data[0]?.TotalSales)}
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -165,4 +103,5 @@ SalesHistoryTable.propTypes = {
   data: PropTypes.array,
   columns: PropTypes.array,
   input_search: PropTypes.string,
+  date: PropTypes.object,
 };

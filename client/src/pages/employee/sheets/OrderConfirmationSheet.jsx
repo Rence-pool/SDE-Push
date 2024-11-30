@@ -20,26 +20,15 @@ import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { useContext } from "react";
 import { AuthContext } from "@/stores/AutProvider";
-export default function OrderConfirmationSheet({
-  trigger,
-  content,
-  refresher,
-}) {
+export default function OrderConfirmationSheet({ trigger, content, refresher }) {
   const {
     userState: { id },
   } = useContext(AuthContext);
 
-  const {
-    data: updateData,
-    loading,
-    error,
-    updateValue,
-    setError,
-  } = useUpdate([], "http://localhost:3000/api/orders/update/status/");
+  const { data: updateData, loading, error, updateValue, setError } = useUpdate([], "http://localhost:3000/api/orders/update/status/");
 
   const [orders, setOrders] = useState(content);
 
-  console.log(orders);
   const handleSheetClose = (event) => {
     if (event) return;
     setError(null);
@@ -96,10 +85,7 @@ export default function OrderConfirmationSheet({
   return (
     <Sheet modal onOpenChange={handleSheetClose}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent
-        className="flex flex-1 flex-col gap-2 outline"
-        onInteractOutside={(event) => event.preventDefault()}
-      >
+      <SheetContent className="flex flex-1 flex-col gap-2 outline" onInteractOutside={(event) => event.preventDefault()}>
         <SheetHeader>
           <SheetTitle>Mark Orders Complete</SheetTitle>
           <SheetDescription>
@@ -114,11 +100,7 @@ export default function OrderConfirmationSheet({
             <TabsList className="flex w-full items-center justify-center">
               <ScrollArea className="w-[45rem] whitespace-nowrap px-2 py-5">
                 {orders.map((order) => (
-                  <TabsTrigger
-                    className="mx-5"
-                    key={order.or_no}
-                    value={order.or_no}
-                  >
+                  <TabsTrigger className="mx-5" key={order.or_no} value={order.or_no}>
                     {order.or_no}
                   </TabsTrigger>
                 ))}
@@ -129,26 +111,18 @@ export default function OrderConfirmationSheet({
             {orders.length > 0 &&
               orders.map((order) => (
                 <TabsContent key={order.or_no} value={order.or_no}>
-                  <form
-                    className="space-y-5"
-                    onSubmit={(event) => handleSubmit(event, order)}
-                  >
+                  <form className="space-y-5" onSubmit={(event) => handleSubmit(event, order)}>
                     <ScrollArea className="flex h-[30rem] flex-1 flex-col gap-2 p-2 pr-4">
                       <div className="flex flex-col p-2">
                         <span>{`Student Name: ${order.s_name}`}</span>
                         <span>{`Order ID:${order.or_no}`}</span>
-                        <span className="my-2 text-center font-semibold">
-                          Order Breakdown
-                        </span>
+                        <span className="my-2 text-center font-semibold">Order Breakdown</span>
                         <div className="flex flex-col gap-2">
                           {order.order.OrderBreakDown.map(
                             (
                               orderBreakDown, // Loop through the order breakdown
                             ) => (
-                              <div
-                                className="flex flex-col"
-                                key={orderBreakDown.ProductAttributeID}
-                              >
+                              <div className="flex flex-col" key={orderBreakDown.ProductAttributeID}>
                                 <span>{`Product Name: ${orderBreakDown.ProductName}`}</span>
                                 <span>{`Product Size: ${orderBreakDown.ProductSize}`}</span>
                                 <span>{`Product Variant: ${orderBreakDown.ProductVariant}`}</span>
@@ -158,9 +132,7 @@ export default function OrderConfirmationSheet({
                               </div>
                             ),
                           )}
-                          <span className="label font-semibold">
-                            Overall Total Amount: {order.total}
-                          </span>
+                          <span className="label font-semibold">Overall Total Amount: {order.total}</span>
                           <Input
                             required
                             placeholder={"OrderID"}
@@ -168,18 +140,15 @@ export default function OrderConfirmationSheet({
                             id={"order-id"}
                             name="order-id"
                             value={order.or_no}
-                            onChange={()=>{}}
+                            onChange={() => {}}
                           />
 
                           <Input
                             required
-                            placeholder={
-                              "Payment ID  Payment Date+ Transaction Number"
-                            }
+                            placeholder={"Payment ID  Payment Date+ Transaction Number"}
                             type={"text"}
                             id={"payment-id"}
                             name="payment-id"
-                          
                           />
                           <Input
                             required
@@ -188,15 +157,9 @@ export default function OrderConfirmationSheet({
                             id={"payment-amount"}
                             name="payment-amount"
                             value={order.total}
-                            onChange={()=>{}}
+                            onChange={() => {}}
                           />
-                          <Input
-                            required
-                            placeholder={"Payment  Date"}
-                            type={"date"}
-                            id={"payment-date"}
-                            name="payment-date"
-                          />
+                          <Input required placeholder={"Payment  Date"} type={"date"} id={"payment-date"} name="payment-date" />
                         </div>
                       </div>
                     </ScrollArea>

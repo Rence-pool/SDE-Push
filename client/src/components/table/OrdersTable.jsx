@@ -2,30 +2,27 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 import CustomSelect from "@/components/customs/CustomSelect";
-import { flexRender, getCoreRowModel, useReactTable, getSortedRowModel, getFilteredRowModel } from "@tanstack/react-table";
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  getSortedRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+} from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
 import PropTypes from "prop-types";
-import CustomTable from "./table/CustomTable";
-import { useUpdate } from "@/hooks/useUpdate";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import CustomTable from "./CustomTable";
+
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { getCurrentDate } from "@/lib/functions";
-import TableToPrint from "./TablePrint";
-import OrderConfirmationSheet from "../pages/employee/sheets/OrderConfirmationSheet";
-import MakeOrdersheet from "../pages/employee/sheets/MakeOrdersheet";
-
-export default function OrdersTable({ data, columns, input_search, refresher }) {
+import DynamicTableToPrintPDF from "../DynamicTableToPrintPDF";
+import OrderConfirmationSheet from "../../pages/employee/sheets/OrderConfirmationSheet";
+import MakeOrdersheet from "../../pages/employee/sheets/MakeOrdersheet";
+import TablePagination from "./TablePagination";
+import { filterDate } from "@/lib/filterDate";
+export default function OrdersTable({ date, data, columns, input_search, refresher }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -40,6 +37,7 @@ export default function OrdersTable({ data, columns, input_search, refresher }) 
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       columnFilters,
@@ -47,7 +45,6 @@ export default function OrdersTable({ data, columns, input_search, refresher }) 
       rowSelection,
     },
   });
-  const { data: updateData, loading, error, updateValue } = useUpdate([], "http://localhost:3000/api/orders/update/status/");
   const rowSelected = table.getSelectedRowModel()?.rows;
 
   return (
@@ -75,7 +72,7 @@ export default function OrdersTable({ data, columns, input_search, refresher }) 
               }}
             />
           </div>
-          <MakeOrdersheet refresher={refresher} trigger={<Button variant="outline">Make Order</Button>} />
+          <MakeOrdersheet refresher={refresher} trigger={<Button variant="outline">Create Order</Button>} />
           <OrderConfirmationSheet
             refresher={refresher}
             content={rowSelected.map((row) => row.original)}
@@ -87,18 +84,26 @@ export default function OrdersTable({ data, columns, input_search, refresher }) 
                   rowSelected.filter((row) => row.original.status === "ORDER_200" || row.original.status === "ORDER_400").length >= 1
                 }
               >
-                Mark Success
+                Mark Order Complete
               </Button>
             }
           />
 
           <PDFDownloadLink
-            document={<TableToPrint data={data} currentDate={format(getCurrentDate(), "MMMM dd, y")} />}
-            fileName={`Orders of ${format(getCurrentDate(), "MMMM dd, y")}.pdf`}
+            document={
+              <DynamicTableToPrintPDF
+                date={filterDate(date)}
+                data={data}
+                title={"Orders Report"}
+                columns={columns.filter((column) => column?.id !== "actions" && column?.id !== "select")}
+              />
+            }
+            fileName={`Orders of ${filterDate(date)}.pdf`}
+            // fileName={`Orders of ${getCurrentDate()}.pdf`}
           >
-            {({ loading }) => (
-              <Button variant="outline" disabled={loading} className="ml-auto">
-                {loading ? "Loading document..." : "Order Report"}
+            {({ loading, error }) => (
+              <Button variant="outline" disabled={loading || data.length === 0} className="ml-auto">
+                {loading ? "Loading document..." : error ? "Error" : "Downloard Orders Report"}
               </Button>
             )}
           </PDFDownloadLink>
@@ -129,8 +134,9 @@ export default function OrdersTable({ data, columns, input_search, refresher }) 
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex h-[35rem] overflow-hidden rounded-md bg-white 2xl:h-[48rem]">
+      <div className="flex h-[33rem] flex-col overflow-hidden rounded-md bg-white 2xl:h-[48rem]">
         <CustomTable columns={columns} table={table} flexRender={flexRender} />
+        <TablePagination table={table} />
       </div>
     </div>
   );
@@ -139,4 +145,6 @@ OrdersTable.propTypes = {
   data: PropTypes.array,
   columns: PropTypes.array,
   input_search: PropTypes.string,
+  refresher: PropTypes.func,
+  date: PropTypes.object,
 };

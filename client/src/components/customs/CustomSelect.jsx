@@ -1,17 +1,9 @@
 import PropTypes from "prop-types";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-export default function CustomSelect({ label, options, onItemSelected }) {
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+export default function CustomSelect({ defaultValue, label, options, onItemSelected }) {
   return (
-    <Select onValueChange={(value) => onItemSelected(value)}>
+    <Select defaultValue={defaultValue} onValueChange={(value) => onItemSelected(value)}>
       <SelectTrigger>
         <SelectValue placeholder={label} />
       </SelectTrigger>
@@ -19,11 +11,7 @@ export default function CustomSelect({ label, options, onItemSelected }) {
         <SelectGroup>
           <SelectLabel>{label}</SelectLabel>
           {options.map((item) => (
-            <SelectItem
-              key={item.value}
-              className="cursor-pointer"
-              value={item.value}
-            >
+            <SelectItem key={item.value} className="cursor-pointer" value={item.value}>
               {item.label}
             </SelectItem>
           ))}
@@ -37,4 +25,5 @@ CustomSelect.propTypes = {
   label: PropTypes.string,
   options: PropTypes.array,
   onItemSelected: PropTypes.func,
+  defaultValue: PropTypes.string,
 };

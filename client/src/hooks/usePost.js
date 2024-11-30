@@ -10,7 +10,7 @@ export const usePost = (url, defaultData = []) => {
     try {
       setLoading(true);
       const response = await axios.post(url, newData);
-
+  await new Promise((resolve) => setTimeout(resolve, 500));
       setData(response.data);
       setLoading(false);
       setError(null);

@@ -74,30 +74,52 @@ router.get("/fetch/display", (req, res) => {
 		res.status(200).send({ data: results });
 	});
 });
+
 router.get("/fetch/product-info", (req, res) => {
-	const productInfo = [];
-	database.query("SELECT * FROM ProductTypes;", (err, results) => {
-		if (err) {
-			console.error("Error fetching products:", err.stack);
-			res.status(500).send({
-				error: "Internal Server Error" + err.stack,
-			});
-			return;
-		}
-		productInfo.push(results);
-		database.query("SELECT * FROM studentprograms;", (err, results) => {
+	const queryProducts = new Promise((resolve, reject) => {
+		database.query("SELECT * FROM ProductTypes;", (err, results) => {
 			if (err) {
-				console.error("Error fetching products:", err.stack);
-				res.status(500).send({
-					error: "Internal Server Error" + err.stack,
-				});
-				return;
+				reject("Error fetching products: " + err.stack);
+			} else {
+				resolve(results);
 			}
-			productInfo.push(results);
-			res.status(200).send({ data: productInfo });
 		});
 	});
+	const queryStudentPrograms = new Promise((resolve, reject) => {
+		database.query("SELECT * FROM studentprograms;", (err, results) => {
+			if (err) {
+				reject("Error fetching products: " + err.stack);
+			} else {
+				resolve(results);
+			}
+		});
+	});
+	const queryProductVariants = new Promise((resolve, reject) => {
+		database.query("SELECT DISTINCT P_AttributeValue FROM productattributes;", (err, results) => {
+			if (err) {
+				reject("Error fetching products: " + err.stack);
+			} else {
+				resolve(results);
+			}
+		});
+	});
+
+	Promise.all([queryProducts, queryStudentPrograms,queryProductVariants])
+		.then((results) => {
+			console.log(results);
+			res.status(200).send({
+				data: results,
+			});
+		})
+		.catch((error) => {
+			console.error(error);
+			res.status(500).send({
+				error: "Internal Server Error: " + error,
+			});
+		});
 });
+
+
 
 router.post("/post/new_product", upload.single("productImage"), async (req, res) => {
 	if (!req.body) {
@@ -275,5 +297,24 @@ router.get("/display-user", (req, res) => {
 		}
 		res.status(200).send({ data: results });
 	});
+});
+
+router.get('/display-user/product-details/:productId', (req, res) => {
+	const { productId } = req.params;
+	console.log(productId);
+	database.query(`SELECT * FROM Products pr INNER JOIN ProductAttributes prs ON pr.ProductID = prs.ProductID 
+INNER JOIN productstocks ps ON ps.P_StockID = prs.P_StockID
+INNER JOIN productimages pi ON pr.ProductID = pi.ProductID WHERE pr.ProductID = ?;
+`,[productId],(err, results) => {
+	if (err) {
+		console.error("Error fetching products:", err.stack);
+		res.status(500).send({
+			error: "Internal Server Error" + err.stack,
+		});
+		return;
+	}
+	res.status(200).send({ data: results });
+}
+);
 });
 module.exports = router;

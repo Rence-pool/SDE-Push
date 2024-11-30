@@ -22,6 +22,7 @@ import Home from "./pages/user/Home.jsx";
 import ProtectedRoutes from "./components/ProtectedRoutes.jsx";
 import AuthProvider from "./stores/AutProvider.jsx";
 import ModifyProduct from "./pages/admin/ModifyProduct.jsx";
+
 export default function App() {
   return (
     <>
@@ -43,7 +44,7 @@ export default function App() {
                 <Route path="/admin" element={<AdminPage />}>
                   <Route index element={<Navigate to="maintenance" />} />
                   <Route path="activity-history" element={<ActivityHistory />} />
-                  <Route path="maintenance/product-details/:productId" element={<ProductDetails />} />
+                  {/* <Route path="maintenance/product-details/:productId" element={<ProductDetails />} /> */}
                   <Route path="maintenance/add-product" element={<AddProduct />} />
                   <Route path="maintenance/modify-product/:productId" element={<ModifyProduct />} />
                   <Route path="maintenance" element={<Maintenance />} />

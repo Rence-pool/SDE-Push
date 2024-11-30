@@ -2,6 +2,10 @@ import { format } from "date-fns";
 export function tabsTriggers(role) {
   let tabsTrigger = [
     {
+      value: "application-activity",
+      label: "Application Activity",
+    },
+    {
       value: "sales-activity",
       label: "Sales Activity",
     },
@@ -9,13 +13,16 @@ export function tabsTriggers(role) {
       value: "stock-activity",
       label: "Stock",
     },
-
+    {
+      value: "user-activity",
+      label: "Users Activity",
+    },
     {
       value: "orders-activity",
       label: "Orders Activity",
     },
   ];
-  if (role === "ADMN") {
+  if (role === "PROWARE") {
     tabsTrigger = [
       {
         value: "sales-activity",
@@ -25,10 +32,7 @@ export function tabsTriggers(role) {
         value: "stock-activity",
         label: "Stock",
       },
-      {
-        value: "user-activity",
-        label: "Users Activity",
-      },
+
       {
         value: "orders-activity",
         label: "Orders Activity",
@@ -42,6 +46,11 @@ export const tabsContent = [
     value: "sales-activity",
     label: "Sales Activity",
     activityType: "SALES",
+  },
+  {
+    value: "application-activity",
+    label: "Application Activity",
+    activityType: "APPLICATION",
   },
   {
     value: "stock-activity",

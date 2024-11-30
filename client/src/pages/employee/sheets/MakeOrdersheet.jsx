@@ -1,11 +1,4 @@
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "../../../components/ui/scroll-area";
 import PropTypes from "prop-types";
@@ -62,11 +55,7 @@ export default function MakeOrdersheet({ trigger, refresher }) {
     loading: fetchLoading,
     error: fetchError,
     setError: fetchSetError,
-  } = useFetch(
-    "http://localhost:3000/api/products/fetch",
-    [],
-    "Error fetching Products",
-  );
+  } = useFetch("http://localhost:3000/api/products/fetch", [], "Error fetching Products");
 
   const {
     data: postResponseData,
@@ -79,15 +68,20 @@ export default function MakeOrdersheet({ trigger, refresher }) {
     setCart([]);
   };
   const filterFetch = initialFetch?.data?.filter((product) => {
-    return product.ProductName.toLowerCase().includes(
-      productSearch.toLowerCase(),
-    );
+    // Filter out the product which is not in stock
+    return product.ProductName.toLowerCase().includes(productSearch.toLowerCase()) && product.Product_StockLeft > 0;
   });
   const handleOnAddProduct = (product) => {
     setCart((prev) => {
       const exist = prev.find((item) => item.P_StockID === product.P_StockID);
       if (exist) {
         return prev.map((item) => {
+          if (item.quantity >= item.Product_StockLeft) {
+            setError("root", {
+              message: "You can't add more than stock left",
+            });
+            return item;
+          }
           if (item.P_StockID === product.P_StockID) {
             return { ...item, quantity: item.quantity + 1 };
           }
@@ -156,56 +150,30 @@ export default function MakeOrdersheet({ trigger, refresher }) {
   return (
     <Sheet modal onOpenChange={handleSheetClose}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent
-        className="flex flex-1 flex-col gap-2 outline"
-        onInteractOutside={(event) => event.preventDefault()}
-      >
+      <SheetContent className="flex flex-1 flex-col gap-2 outline" onInteractOutside={(event) => event.preventDefault()}>
         <SheetHeader>
           <SheetTitle>Make Order</SheetTitle>
           <SheetDescription>
             <span className="block space-x-4">
-              {errors.name && (
-                <span className="text-red-500">{errors.name.message}</span>
-              )}
-              {errors.studentId && (
-                <span className="text-red-500">{errors.studentId.message}</span>
-              )}
+              {errors.name && <span className="text-red-500">{errors.name.message}</span>}
+              {errors.studentId && <span className="text-red-500">{errors.studentId.message}</span>}
 
-              {errors.root && (
-                <span className="text-red-500">{errors.root.message}</span>
-              )}
+              {errors.root && <span className="text-red-500">{errors.root.message}</span>}
             </span>
           </SheetDescription>
         </SheetHeader>
-        <form
-          className="flex h-full flex-col gap-5"
-          onSubmit={handleSubmit(handleOnFormSubmit)}
-        >
+        <form className="flex h-full flex-col gap-5" onSubmit={handleSubmit(handleOnFormSubmit)}>
           {postLoading && <CustomSkeleton times={20} />}
-          {postError && (
-            <div className="m-auto text-2xl text-black">
-              {postError?.message}
-            </div>
-          )}
-          {fetchError && (
-            <div className="m-auto text-2xl text-black">
-              {fetchError?.message}
-            </div>
-          )}
+          {postError && <div className="m-auto text-2xl text-black">{postError?.message}</div>}
+          {fetchError && <div className="m-auto text-2xl text-black">{fetchError?.message}</div>}
           {fetchLoading && <CustomSkeleton times={20} />}
           {!fetchLoading && !fetchError && (
             <Tabs defaultValue="account" className="flex-1">
               <TabsList className="flex w-full">
-                <TabsTrigger
-                  className="flex-1 data-[state=active]:bg-gray-500 data-[state=active]:text-white"
-                  value="account"
-                >
+                <TabsTrigger className="flex-1 data-[state=active]:bg-gray-500 data-[state=active]:text-white" value="account">
                   Student Information
                 </TabsTrigger>
-                <TabsTrigger
-                  className="flex-1 data-[state=active]:bg-gray-500 data-[state=active]:text-white"
-                  value="products"
-                >
+                <TabsTrigger className="flex-1 data-[state=active]:bg-gray-500 data-[state=active]:text-white" value="products">
                   Product Order
                 </TabsTrigger>
               </TabsList>
@@ -220,9 +188,7 @@ export default function MakeOrdersheet({ trigger, refresher }) {
                       required: "Name is required",
                       validate: (value) => {
                         const nameRegex = /^[A-Za-zÀ-ÿ\s-'"]+$/;
-                        return (
-                          nameRegex.test(value) || "Please enter a valid name."
-                        );
+                        return nameRegex.test(value) || "Please enter a valid name.";
                       },
                     }),
                   }}
@@ -249,7 +215,7 @@ export default function MakeOrdersheet({ trigger, refresher }) {
                 />
               </TabsContent>
               <TabsContent className="flex h-full px-2" value="products">
-                <ScrollArea className="flex h-[27rem] flex-1 flex-col gap-2 pr-5">
+                <ScrollArea className="flex h-[25rem] flex-1 flex-col gap-2 pr-5">
                   {/* <ScrollArea className="m-2 flex h-[20rem] flex-1 flex-row gap-2 whitespace-nowrap"> */}
                   <div className="m-2 flex h-[20rem] flex-1 flex-col gap-2">
                     <Input
@@ -261,23 +227,16 @@ export default function MakeOrdersheet({ trigger, refresher }) {
                       isError={productSearchHasError}
                     />
 
-                    <ScrollArea className="flex flex-1 gap-2 whitespace-nowrap">
+                    <ScrollArea className="flex gap-2 whitespace-nowrap">
                       <div className="m-2 flex flex-nowrap gap-5">
                         {filterFetch?.map((product) => (
-                          <div
-                            key={product.P_StockID}
-                            className="card bg-base-100 p-0 text-xs shadow-xl outline"
-                          >
+                          <div key={product.P_StockID} className="card bg-base-100 p-0 text-xs shadow-xl outline">
                             <div className="card-body text-xs">
-                              <h2 className="card-title text-xs">
-                                {product.ProductName}
-                              </h2>
+                              <h2 className="card-title text-xs">{product.ProductName}</h2>
                               <span>{product.P_AttributeValue} </span>
                               <span>{product.P_AttributeSize} </span>
 
-                              <span className="font-semibold tracking-wider">
-                                {formatCurrency(product.P_AttributePrice)}{" "}
-                              </span>
+                              <span className="font-semibold tracking-wider">{formatCurrency(product.P_AttributePrice)} </span>
 
                               <Button
                                 type="button"
@@ -299,40 +258,35 @@ export default function MakeOrdersheet({ trigger, refresher }) {
                       <ScrollBar orientation="horizontal" />
                     </ScrollArea>
                   </div>
-                  <span>Order Details</span>
-                  {cart.map((product) => (
-                    <div
-                      key={product.P_StockID}
-                      className="card bg-base-100 mx-2 my-2 p-2 text-xs shadow-xl outline"
-                    >
-                      <span>{product.ProductName}</span>
-                      <span>{product.P_AttributeValue} </span>
-                      <span>{product.P_AttributeSize} </span>
+                  <ScrollArea className="h-[15rem] flex-1 pr-1">
+                    <span>Order Details</span>
+                    {cart.map((product) => (
+                      <div key={product.P_StockID} className="card bg-base-100 mx-2 my-2 p-2 text-xs shadow-xl outline">
+                        <span>{product.ProductName}</span>
+                        <span>{product.P_AttributeValue} </span>
+                        <span>{product.P_AttributeSize} </span>
 
-                      <span className="font-semibold tracking-wider">
-                        {formatCurrency(product.P_AttributePrice)}{" "}
-                      </span>
-                      <span>{`Quantity ${product.quantity}`} </span>
-                      <Button
-                        type="button"
-                        size="sm"
-                        className="h-5 uppercase tracking-wider"
-                        onClick={() => {
-                          handleOnDeductProductQuantity(product);
-                        }}
-                      >
-                        Deduct
-                      </Button>
-                    </div>
-                  ))}
+                        <span className="font-semibold tracking-wider">{formatCurrency(product.P_AttributePrice)} </span>
+                        <span>{`Quantity ${product.quantity}`} </span>
+                        <Button
+                          type="button"
+                          size="sm"
+                          className="h-5 uppercase tracking-wider"
+                          onClick={() => {
+                            handleOnDeductProductQuantity(product);
+                          }}
+                        >
+                          Deduct
+                        </Button>
+                      </div>
+                    ))}
+                  </ScrollArea>
                 </ScrollArea>
               </TabsContent>
             </Tabs>
           )}
           <div>
-            <span className="font-semibold tracking-wider">
-              Total: {formatCurrency(totalOrder)}
-            </span>
+            <span className="font-semibold tracking-wider">Total: {formatCurrency(totalOrder)}</span>
           </div>
           <Button>Submit</Button>
         </form>

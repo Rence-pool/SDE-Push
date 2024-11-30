@@ -20,15 +20,6 @@ export const inventoryColumns = (setTriggerRefresh) => {
       },
     },
     {
-      accessorKey: "ProgramLevel",
-      header: () => <div className="text-center">Level</div>,
-      cell: ({ row }) => {
-        const product_level = row.getValue("ProgramLevel");
-
-        return <div className="text-left">{product_level}</div>;
-      },
-    },
-    {
       accessorKey: "ProductProgram",
       header: () => <div className="text-center"> Program</div>,
       cell: ({ row }) => {

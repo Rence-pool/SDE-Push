@@ -38,7 +38,7 @@ export default function UserPageHeader() {
   return (
     <section className="navbar h-[5rem] gap-2 rounded-2xl">
       <div className="flex gap-2 text-white">
-        <Button variant="ghost" className="h-full max-w-[5rem] flex-1 p-2 hover:bg-gray-800" onClick={() => navigate("home")}>
+        <Button variant="ghost" className="h-full min-w-[5rem] max-w-[5rem] flex-1 p-2 hover:bg-gray-800" onClick={() => navigate("home")}>
           <img src={LOGO} />
         </Button>
         <NavigationMenu>
@@ -74,7 +74,7 @@ export default function UserPageHeader() {
             key={link.label}
             to={link.path}
             className={({ isActive }) =>
-              `btn btn-accent flex h-auto items-center justify-center border-0 bg-transparent text-white transition-all duration-200 hover:scale-105 hover:bg-gray-500 hover:shadow-lg ${
+              `btn btn-accent hidden h-auto items-center justify-center border-0 bg-transparent text-white transition-all duration-200 hover:scale-105 hover:bg-gray-500 hover:shadow-lg lg:inline-flex ${
                 isActive ? "bg-blue-500" : ""
               }`
             }
@@ -85,7 +85,7 @@ export default function UserPageHeader() {
           </NavLink>
         ))}
       </div>
-      <div className="flex flex-1 items-center justify-center text-black">
+      <div className="hidden flex-1 items-center justify-center text-black lg:flex">
         <label className="input input-bordered flex max-w-[40rem] flex-1 items-center gap-2 rounded-3xl">
           <input type="text" className="grow" placeholder="Search" />
           <Search />
@@ -112,7 +112,7 @@ export default function UserPageHeader() {
             </div>
           </div>
         </div>
-        <Button variant="ghost" className="hover:scale-105 hover:bg-gray-500 hover:text-white hover:shadow-lg">
+        <Button variant="ghost" className="hidden hover:scale-105 hover:bg-gray-500 hover:text-white hover:shadow-lg lg:flex">
           <Bell />
           Notification
         </Button>
@@ -124,13 +124,7 @@ export default function UserPageHeader() {
           </div>
           <ul tabIndex={0} className="menu dropdown-content menu-sm rounded-box bg-base-100 z-[1] mt-3 w-52 p-2 text-black shadow">
             <li>
-              <a className="justify-between">
-                Profile
-                <span className="badge">New</span>
-              </a>
-            </li>
-            <li>
-              <a>Settings</a>
+              <a className="justify-between">Profile</a>
             </li>
             <li>
               <Link to="/login">Logout</Link>

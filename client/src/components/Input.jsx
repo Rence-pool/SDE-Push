@@ -13,7 +13,7 @@ export default function Input({
   ...props
 }) {
   return (
-    <div className="flex flex-col gap-2 p-2">
+    <div className="flex flex-1 flex-col gap-2 p-2">
       <label className={`label label-text ${labelStyle}`} htmlFor={id}>
         {placeholder}
       </label>
@@ -25,9 +25,7 @@ export default function Input({
         type={type}
         placeholder={placeholder}
         {...props}
-        className={`input input-bordered ${className} ${
-          isError && "input-error"
-        }`}
+        className={`input input-bordered ${className} ${isError && "input-error"}`}
       />
       {isError && (
         <label className="label-text text-error" htmlFor={id}>

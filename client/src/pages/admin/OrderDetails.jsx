@@ -35,7 +35,7 @@ export default function OrderDetails() {
         </div>
       )}
 
-      <ScrollArea className="z-50 flex h-[20rem] flex-1 flex-col overflow-hidden rounded-lg pr-5 text-black">
+      <ScrollArea className="z-50 flex h-[25rem] flex-1 flex-col overflow-hidden rounded-lg pr-5 text-black">
         <OrderBreakdownTable columns={columnsOrderDetailsColumns} data={orderDetails} error={error} input_search="ProductName" />
       </ScrollArea>
     </main>

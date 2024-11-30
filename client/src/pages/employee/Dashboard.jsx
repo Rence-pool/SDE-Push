@@ -5,14 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { useFetch } from "@/hooks/useFetch";
 import CustomSkeleton from "@/components/customs/CustomSkeleton";
 import { getCurrentDate } from "@/lib/functions";
-import { useContext } from "react";
-import { AuthContext } from "@/stores/AutProvider";
 import { dashboardCards } from "@/lib/dashboard_cards";
 export default function Dashboard() {
   const navigate = useNavigate();
-  const {
-    userState: { role },
-  } = useContext(AuthContext);
+
   const {
     data: salesData,
     loading,
@@ -22,7 +18,7 @@ export default function Dashboard() {
     {},
     "Error fetching Sales History",
   );
-  const cards = dashboardCards(role, salesData);
+  const cards = dashboardCards(salesData);
   return (
     <>
       <section className="flex h-full flex-1 flex-col gap-2 p-2 lg:flex-col">
@@ -34,7 +30,13 @@ export default function Dashboard() {
               {cards.map((item) => (
                 <DashboardCards
                   key={item.title}
-                  onClick={() => navigate(item.location)}
+                  onClick={() => {
+                    if (item.location === "/employee/inventory") {
+                      navigate(item.location, { state: { stockCondition: "OUT OF STOCK" } });
+                      return;
+                    }
+                    navigate(item.location);
+                  }}
                   title={
                     <>
                       <p className="stat-title flex-1 dark:text-white">{item.title}</p>
