@@ -317,4 +317,20 @@ INNER JOIN productimages pi ON pr.ProductID = pi.ProductID WHERE pr.ProductID = 
 }
 );
 });
+router.put('/update/:valudeID', (req, res) => {
+	
+	const {
+		
+		valueID,
+		value,
+		tableName,
+		columnName,
+		actor,
+		date,
+		activityType,
+		description
+	  } = req.body;
+
+	  console.log(req.body);
+	});
 module.exports = router;

@@ -81,5 +81,5 @@ export default function CustomSidebar({ sidebarContent, userID }) {
 }
 CustomSidebar.propTypes = {
   sidebarContent: PropTypes.array,
-  userID: PropTypes.string,
+  userID: PropTypes.number,
 };

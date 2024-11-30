@@ -10,7 +10,6 @@ export default function ModifyProductTypes({ trigger }) {
   const {
     userState: { id },
   } = useContext(AuthContext);
-  console.log(id);
 
   // console.log(productDetails);
 

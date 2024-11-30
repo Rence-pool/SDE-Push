@@ -10,10 +10,12 @@ import { productTypes_productProgram } from "../../lib/product_types_product_pro
 import { useEffect, useState } from "react";
 import TogglableField from "@/components/TogglableField";
 import { useForm, useFieldArray } from "react-hook-form";
+import { useUpdate } from "@/hooks/useUpdate";
+import Input from "@/components/Input";
+
 export default function ModifyProduct() {
   const navigate = useNavigate();
   const { productId } = useParams();
-  const [productData, setProductData] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [image, setImage] = useState(null);
   const {
@@ -27,6 +29,13 @@ export default function ModifyProduct() {
     error: fetchError,
     setTriggerRefresh,
   } = useFetch("http://localhost:3000/api/products/fetch/product-info", [], "Error fetching Products");
+
+  const {
+    data: updateProduct,
+    loading: updateProductLoading,
+    error: updateProductError,
+    updateData: updateProductData,
+  } = useUpdate(`http://localhost:3000/api/products/update/${productId}`, []);
 
   const { productTypes, productProgram } = productTypes_productProgram(product_info);
 
@@ -46,26 +55,19 @@ export default function ModifyProduct() {
   useEffect(() => {
     if (fetchProduct?.data?.length > 0) {
       setImagePreview(`http://localhost:3000/images/products/${fetchProduct.data[0].ProductImage}`);
-      setProductData(fetchProduct.data[0]);
     }
   }, [fetchProduct]);
-  console.log(fetchProduct);
+
+  const productData = fetchProduct?.data?.length > 0 ? fetchProduct.data[0] : null;
 
   const {
     register,
     control,
     handleSubmit,
-    getValues,
     setError,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      productID: "",
-      productName: "",
-      productType: "",
-      productDescription: "",
-      productDefaultPrice: "",
-      productProgram: "",
       productAttributes: [],
     },
   });
@@ -74,8 +76,74 @@ export default function ModifyProduct() {
     control,
   });
 
-  const handleAddVariantField = () => {};
-  const handleRemoveVariantField = (productVariantIndex) => {};
+  const handleAddVariantField = () => {
+    prepend({
+      productAttributeName: productData.ProductVariants[0].ProductVariantName,
+      productAttributeValue: productData.ProductVariants[0].ProductVariantValue,
+      productAttributeSize: "",
+      productAttributePrice: 0,
+      productStockID: "",
+    });
+  };
+  const handleRemoveVariantField = (productVariantIndex) => {
+    // Update the productData state with the new productVariants array
+    console.log(productVariantIndex);
+  };
+  const handleOnFormSubmit = (data) => {
+    console.log(data);
+    setTriggerRefresh((prevState) => !prevState);
+  };
+
+  const productFields = [
+    {
+      name: "ProductName",
+      value: productData?.ProductName,
+      type: "text",
+      inputType: "text",
+      placeholder: "Product Name",
+
+      tableName: "products",
+      columnName: "ProductName",
+    },
+    {
+      name: "ProductDescription",
+      value: productData?.ProductDescription,
+      type: "text",
+      inputType: "text",
+      placeholder: "Product Description",
+      tableName: "products",
+      columnName: "ProductDescription",
+    },
+    {
+      name: "ProductDefaultPrice",
+      value: productData?.ProductDefaultPrice,
+      type: "number",
+      inputType: "text",
+      placeholder: "Product Default Price",
+      tableName: "products",
+      columnName: "ProductDefaultPrice",
+    },
+    {
+      name: "ProductProgram",
+      value: productData?.ProductProgram,
+      type: "text",
+      inputType: "select",
+      placeholder: "Product Program",
+      tableName: "products",
+      options: productProgram,
+      columnName: "ProductProgram",
+    },
+    {
+      name: "ProductType",
+      value: productData?.ProductType,
+      type: "text",
+      inputType: "select",
+      options: productTypes,
+      placeholder: "Product Type",
+      tableName: "products",
+      columnName: "ProductTypeID",
+    },
+  ];
 
   return (
     <main className="m-5 flex flex-1 flex-col gap-2 text-black">
@@ -83,11 +151,20 @@ export default function ModifyProduct() {
         <Button className="bg-white text-black hover:bg-white/80" onClick={() => navigate(-1)}>
           <ChevronLeft />
         </Button>
+        <Button
+          disabled={updateProductLoading}
+          className="bg-white text-black hover:bg-white/80"
+          onClick={() => document.getElementById("submit").click()}
+        >
+          {updateProductLoading ? "Updating..." : "Update Product"}
+        </Button>
       </div>
 
       {fetchProductLoading && <CustomSkeleton times={20} />}
+      {updateProductLoading && <CustomSkeleton times={20} />}
 
       {fetchLoading && <CustomSkeleton times={20} />}
+
       <ScrollArea className="flex flex-1 flex-col justify-center p-2 pr-0.5">
         <header className="flex flex-col items-center justify-center gap-2 p-2">
           {imagePreview && (
@@ -113,45 +190,27 @@ export default function ModifyProduct() {
           {fetchProduct?.data?.length === 0 && <div className="self-center text-2xl text-white">No Products Found</div>}
           {fetchError && <div className="self-center text-2xl text-white">{fetchError?.message}</div>}
           {fetchProductError && <div className="flex-1 self-center text-2xl text-white">{fetchProductError?.message}</div>}
+          {updateProductError && <div className="text-white">{updateProductError?.message}</div>}
         </header>
         {!fetchProductError && productData !== null && (
           <section>
             <div className="flex flex-col gap-2 px-2 text-black">
               <div className="flex flex-col gap-5">
                 <div className="flex flex-col text-white">
-                  <TogglableField
-                    defaultValue={productData.ProductID}
-                    placeholder="Product Product ID"
-                    setTriggerRefresh={setTriggerRefresh}
-                  />
-                  <TogglableField defaultValue={productData.ProductName} placeholder="Product Name" setTriggerRefresh={setTriggerRefresh} />
-                  <TogglableField
-                    defaultValue={productData.ProductDescription}
-                    placeholder="Product Description"
-                    setTriggerRefresh={setTriggerRefresh}
-                  />
-                  <TogglableField
-                    defaultValue={productData.ProductDefaultPrice}
-                    placeholder="Product Default Price"
-                    type="number"
-                    setTriggerRefresh={setTriggerRefresh}
-                  />
-                  <TogglableField
-                    defaultValue={productData.ProductProgram}
-                    placeholder="Product Program"
-                    options={productProgram}
-                    text="text"
-                    inputType="select"
-                    setTriggerRefresh={setTriggerRefresh}
-                  />
-                  <TogglableField
-                    defaultValue={productData.ProductType}
-                    placeholder="Product Type"
-                    options={productTypes}
-                    text="text"
-                    inputType="select"
-                    setTriggerRefresh={setTriggerRefresh}
-                  />
+                  {productFields.map((field) => (
+                    <TogglableField
+                      key={field.name}
+                      defaultValue={field.value}
+                      placeholder={field.placeholder}
+                      type={field.type}
+                      id={productData?.ProductID}
+                      inputType={field.inputType}
+                      setTriggerRefresh={setTriggerRefresh}
+                      tableName={field.tableName}
+                      columnName={field.columnName}
+                      options={field?.options}
+                    />
+                  ))}
                 </div>
                 <div className="space-x-6">
                   <Button variant="secondary" size="icon" type="button" onClick={handleAddVariantField}>
@@ -164,25 +223,31 @@ export default function ModifyProduct() {
                       defaultValue={product.ProductVariantName}
                       placeholder="Product Variant Name"
                       type="number"
+                      id={product.ProductVariant}
+                      tableName={"productattributes"}
                       setTriggerRefresh={setTriggerRefresh}
                     />
                     <TogglableField
                       defaultValue={product.ProductVariantValue}
                       placeholder="Product Variant Value"
                       type="number"
+                      id={product.ProductVariant}
                       setTriggerRefresh={setTriggerRefresh}
+                      tableName={"productattributes"}
                     />
                     <TogglableField
                       defaultValue={product.ProductSize}
                       placeholder="Product Size"
                       type="number"
                       setTriggerRefresh={setTriggerRefresh}
+                      tableName={"productattributes"}
                     />
                     <TogglableField
                       defaultValue={product.ProductPrice}
                       placeholder="Product Price"
                       type="number"
                       setTriggerRefresh={setTriggerRefresh}
+                      tableName={"productattributes"}
                     />
                     <Button
                       variant="secondary"
@@ -197,6 +262,53 @@ export default function ModifyProduct() {
                     </Button>
                   </div>
                 ))}
+                <form onSubmit={handleSubmit(handleOnFormSubmit)}>
+                  {fields.map((field, index) => (
+                    <div key={field.id} className="flex flex-wrap gap-2 border-b-2 border-y-gray-300 pb-5 text-black">
+                      <Input
+                        labelStyle="text-white"
+                        type="text"
+                        id={`product-attribute-value-${index}`}
+                        placeholder="Product Attribute Value"
+                        register={{
+                          ...register(`productAttributes.${index}.productAttributeValue`, {
+                            required: true,
+                          }),
+                        }}
+                        isError={errors.productAttributes?.[index]?.productAttributeValue}
+                      />
+                      <Input
+                        labelStyle="text-white"
+                        type="text"
+                        id={`product-attribute-size-${index}`}
+                        placeholder="Product Attribute Size"
+                        register={{
+                          ...register(`productAttributes.${index}.productAttributeSize`, {
+                            required: true,
+                          }),
+                        }}
+                        isError={errors.productAttributes?.[index]?.productAttributeSize}
+                      />
+                      <Input
+                        labelStyle="text-white"
+                        type="number"
+                        id={`product-attribute-price-${index}`}
+                        placeholder="Product Price"
+                        register={{
+                          ...register(`productAttributes.${index}.productAttributePrice`, {
+                            required: true,
+                            valueAsNumber: true,
+                            validate: (value) => !isNaN(value) && value > 0,
+                          }),
+                        }}
+                        isError={errors.productAttributes?.[index]?.productAttributePrice}
+                      />
+                      <Button variant="secondary" size="icon" type="button" onClick={() => remove(index)}>
+                        <Minus />
+                      </Button>
+                    </div>
+                  ))}
+                </form>
               </div>
 
               <button className="hidden" id="submit"></button>

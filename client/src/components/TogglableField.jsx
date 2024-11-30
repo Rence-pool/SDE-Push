@@ -1,11 +1,35 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Input from "./Input";
 import { Button } from "./ui/button";
 import { Pencil } from "lucide-react";
 import { useInput } from "@/hooks/useInput";
 import SelectModal from "./modals/SelectModal";
 import PropTypes from "prop-types";
-export default function TogglableField({ defaultValue, placeholder, type = "text", inputType = "text", options, setTriggerRefresh }) {
+import { useUpdate } from "@/hooks/useUpdate";
+import { AuthContext } from "@/stores/AutProvider";
+
+import { getCurrentDate } from "@/lib/functions";
+export default function TogglableField({
+  defaultValue,
+  placeholder,
+  type = "text",
+  inputType = "text",
+  options,
+  setTriggerRefresh,
+  tableName,
+  columnName,
+  id,
+}) {
+  const {
+    data: updateProduct,
+    loading: updateProductLoading,
+    error: updateProductError,
+    updateValue: updateProductData,
+  } = useUpdate([], `http://localhost:3000/api/products/update/`);
+
+  const {
+    userState: { id: actor },
+  } = useContext(AuthContext);
   const constraintsTexts = (value) => {
     return value !== "" && value !== "-" && value !== " ";
   };
@@ -28,9 +52,20 @@ export default function TogglableField({ defaultValue, placeholder, type = "text
 
   const onFormSubmit = (e) => {
     e.preventDefault();
-    // console.log(e);
-    // setEnteredValue(value);
-    // setTriggerRefresh((prevState) => !prevState);
+
+    const data = {
+      columnName: columnName,
+      value: value,
+      tableName: tableName,
+      valueID: id,
+      id: id,
+      actor: actor,
+      date: getCurrentDate(),
+      activityType: "APPLICATION",
+      description: `Update Product Field ${columnName} ${defaultValue} to ${value}`,
+    };
+    console.log(data);
+    updateProductData(data);
 
     toggleVisiblity(e);
 
@@ -39,7 +74,7 @@ export default function TogglableField({ defaultValue, placeholder, type = "text
 
   if (isVisible) {
     return (
-      <form onSubmit={onFormSubmit} className="flex flex-1 items-center justify-center">
+      <form onSubmit={onFormSubmit} className="flex flex-1 items-center justify-center gap-5">
         <div className="flex flex-1 text-black">
           {inputType === "text" ? (
             <Input
@@ -96,4 +131,6 @@ TogglableField.propTypes = {
   inputType: PropTypes.string,
   options: PropTypes.array,
   setTriggerRefresh: PropTypes.func,
+  tableName: PropTypes.string,
+  variantID: PropTypes.number,
 };

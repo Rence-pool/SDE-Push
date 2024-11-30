@@ -10,7 +10,7 @@ export default function SelectModal({
   ...props
 }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-1 flex-col gap-2">
       <label htmlFor={id} className={`label label-text ${labelStyle}`}>
         {placeholder}
       </label>
@@ -20,9 +20,7 @@ export default function SelectModal({
         name={id}
         {...props}
         id={id}
-        className={`select select-bordered w-full ${
-          hasError && "border-red-500"
-        }`}
+        className={`select select-bordered w-full ${hasError && "border-red-500"}`}
       >
         <option defaultChecked>-</option>
         {options.map((option) => (
