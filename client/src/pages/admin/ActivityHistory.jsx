@@ -20,7 +20,6 @@ export default function ActivityHistory() {
 
   const [date, setDate] = useState(undefined);
 
-  console.log(ActivityHistoryData);
   const filterData =
     ActivityHistoryData.length === 0
       ? []

@@ -26,37 +26,6 @@ router.get("/fetch", (req, res) => {
 			});
 			return;
 		}
-		// console.log("Fetched products:", results);
-		const resultWithVariant = results.reduce((acc, item) => {
-			// Check if product exists in accumulator
-			let product = acc.find((p) => p.ProductID === item.ProductID);
-
-			if (!product) {
-				// If the product doesn't exist, create a new one
-				product = {
-					ProductID: item.ProductID,
-					ProductName: item.ProductName,
-					ProductDescription: item.ProductDescription,
-					ProductProgram: item.ProgramID,
-					ProductType: item.ProductTypeID,
-					ProductStockID: item.ProductStockID,
-					ProductVariants: [],
-				};
-				acc.push(product);
-			}
-
-			// Add the variant to the product's variants array
-			product.ProductVariants.push({
-				ProductSizeID: item.ProductSizeID,
-				ProductVariantID: item.ProductVariantID,
-				ProductPrice: item.ProductPrice,
-				ProductStockLeft: item.ProductStockLeft,
-				ProductVariantName: item.ProductVariantName,
-				ProductSizeName: item.ProductSizeName,
-			});
-
-			return acc;
-		}, []);
 
 		res.status(200).send({ data: results });
 	});
@@ -317,20 +286,139 @@ INNER JOIN productimages pi ON pr.ProductID = pi.ProductID WHERE pr.ProductID = 
 }
 );
 });
-router.put('/update/:valudeID', (req, res) => {
+router.put('/update/productImage/:productID',upload.single("image"), async(req, res) => {
 	
+	console.log('product image',req.body);
+	const productImage = req.file.filename;
+	console.log(productImage);
 	const {
-		
-		valueID,
-		value,
-		tableName,
 		columnName,
+		id,
+		tableName,
 		actor,
 		date,
 		activityType,
-		description
-	  } = req.body;
+		productName,
+		activityDescription,
+	} = req.body;
 
-	  console.log(req.body);
+	database.query("UPDATE productimages SET ProductImage = ? WHERE ProductID = ?;", [productImage, id], (err, results) => {
+		if (err) {
+			console.error("Error updating product stock:", err.stack);
+			res.status(500).send({
+				error: "Internal Server Error" + err.stack,
+			});
+			return;
+		}
+		database.query("INSERT INTO ActivityHistory (ActivityTitle,ActivityContent,ActivityDateTime,ActivityActor,ActivityType) VALUES(?,?,?,?,?);", ['Product Modified', `Image of ${productName} was Modified`, date, actor, activityType], (err, results) => {
+			if (err) {
+				console.error("Error updating product stock:", err.stack);
+				res.status(500).send({
+					error: "Internal Server Error" + err.stack,
+				});
+				return;
+			}
+			res.status(200).send({
+				data: results,
+			});
+		});
+
+		// res.status(200).send({ data: results });
 	});
+});
+router.put('/update/add-product-attributes/:productID',(req, res) => {
+	console.log('product attribute',req.body);
+	const {
+		productID,
+		productName,
+		actor,
+		date,
+		activityType,
+		productAttributes,
+		activityDescription,
+	} = req.body;
+
+	console.log(req.body);
+
+	productAttributes.forEach((attribute) => {
+		let stockCondition = "high";
+		if (+attribute.productStockQuantity === 0) stockCondition = "out of stock";
+		else if (+attribute.productStockQuantity <= 10) stockCondition = "low";
+		else if (+attribute.productStockQuantity <= 20) stockCondition = "medium";
+
+		database.query("INSERT INTO productattributes (ProductID,P_AttributeName,P_AttributeValue,P_AttributeSize,P_AttributePrice,P_StockID) VALUES(?,?,?,?,?,?);", 
+			[productID,attribute.productAttributeName, attribute.productAttributeValue, attribute.productAttributeSize, attribute.productAttributePrice, attribute.productStockID], 
+			(err, results) => {
+			if (err) {
+				console.error("Error updating product stock:", err.stack);
+				res.status(500).send({
+					error: "Internal Server Error" + err.stack,
+				});
+				return;
+			}
+		database.query("INSERT INTO productstocks VALUES(?,?,?);",  
+			[attribute.productStockID, attribute.productStockQuantity, stockCondition.toUpperCase()], 
+			(err, results) => {
+			if (err) {
+				console.error("Error updating product stock:", err.stack);
+				res.status(500).send({
+					error: "Internal Server Error" + err.stack,
+				});
+				return;
+			}
+		});
+	});
+});
+	database.query("INSERT INTO ActivityHistory (ActivityTitle,ActivityContent,ActivityDateTime,ActivityActor,ActivityType) VALUES(?,?,?,?,?);", ['Product Modified', activityDescription, `${date}`, actor, activityType], (err, results) => {
+		if (err) {
+			console.error("Error updating product stock:", err.stack);
+			res.status(500).send({
+				error: "Internal Server Error" + err.stack,
+			});
+			return;
+		}
+		res.status(200).send({
+			data: results,
+		});
+	});
+})
+
+router.put('/update/:valudeID', (req, res) => {
+	
+	console.log(req.body);
+	const {
+		columnName,
+		value,
+		tableName,
+		valueID,
+		actor,
+		date,
+		activityType,
+		activityDescription,
+	} = req.body;
+
+	const updateQuery = tableName ==='products' ?`UPDATE ${tableName} SET  ${columnName}= ? WHERE ProductID =?` : `UPDATE ${tableName} SET ${columnName} = ? WHERE P_AttributeID = ?;` 
+
+	database.query(updateQuery, [value, valueID], (err, results) => {
+		if (err) {
+			console.error("Error updating product stock:", err.stack);
+			res.status(500).send({
+				error: "Internal Server Error" + err.stack,
+			});
+			return;
+		}
+		database.query("INSERT INTO ActivityHistory (ActivityTitle,ActivityContent,ActivityDateTime,ActivityActor,ActivityType) VALUES(?,?,?,?,?);", ['Product Modified', activityDescription, `${date}`, actor, activityType], (err, results) => {
+			if (err) {
+				console.error("Error updating product stock:", err.stack);
+				res.status(500).send({
+					error: "Internal Server Error" + err.stack,
+				});
+				return;
+			}
+			res.status(200).send({
+				data: results,
+			});
+		});
+	});
+});
 module.exports = router;

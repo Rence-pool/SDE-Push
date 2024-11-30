@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import Input from "./Input";
 import { Button } from "./ui/button";
 import { Pencil } from "lucide-react";
@@ -7,8 +7,8 @@ import SelectModal from "./modals/SelectModal";
 import PropTypes from "prop-types";
 import { useUpdate } from "@/hooks/useUpdate";
 import { AuthContext } from "@/stores/AutProvider";
-
-import { getCurrentDate } from "@/lib/functions";
+import { toast } from "sonner";
+import { getCurrentDate, getCurrentTime } from "@/lib/functions";
 export default function TogglableField({
   defaultValue,
   placeholder,
@@ -18,11 +18,11 @@ export default function TogglableField({
   setTriggerRefresh,
   tableName,
   columnName,
+  productName,
   id,
 }) {
   const {
     data: updateProduct,
-    loading: updateProductLoading,
     error: updateProductError,
     updateValue: updateProductData,
   } = useUpdate([], `http://localhost:3000/api/products/update/`);
@@ -50,9 +50,24 @@ export default function TogglableField({
     setIsVisible((prevState) => !prevState);
   };
 
+  useEffect(() => {
+    if (updateProduct?.data?.affectedRows >= 1) {
+      toast("Product Updated Successfully", {
+        type: "success",
+        autoClose: 2000,
+        className: "m-5",
+        pauseOnHover: true,
+        closeOnClick: true,
+
+        draggable: true,
+      });
+    }
+  }, [updateProduct]);
   const onFormSubmit = (e) => {
     e.preventDefault();
-
+    if (defaultValue === value) {
+      return;
+    }
     const data = {
       columnName: columnName,
       value: value,
@@ -60,16 +75,14 @@ export default function TogglableField({
       valueID: id,
       id: id,
       actor: actor,
-      date: getCurrentDate(),
+      date: `${getCurrentDate()} ${getCurrentTime()}`,
       activityType: "APPLICATION",
-      description: `Update Product Field ${columnName} ${defaultValue} to ${value}`,
+      activityDescription: `Update ${productName} Field ${columnName} ${defaultValue} to ${value}`,
     };
-    console.log(data);
+
     updateProductData(data);
 
     toggleVisiblity(e);
-
-    console.log("submit");
   };
 
   if (isVisible) {
@@ -113,6 +126,7 @@ export default function TogglableField({
     <>
       <div className="flex flex-1 items-center">
         <div className="flex flex-1 flex-col gap-2">
+          {updateProductError && <div className="flex-1 text-white">{updateProductError?.message}</div>}
           <span className="text-xl font-semibold">{placeholder}: </span>
           <span className="text-lg">{value}</span>
         </div>
@@ -133,4 +147,7 @@ TogglableField.propTypes = {
   setTriggerRefresh: PropTypes.func,
   tableName: PropTypes.string,
   variantID: PropTypes.number,
+  productName: PropTypes.string,
+  columnName: PropTypes.string,
+  id: PropTypes.string,
 };

@@ -2,12 +2,12 @@ import { format } from "date-fns";
 export function tabsTriggers(role) {
   let tabsTrigger = [
     {
-      value: "application-activity",
-      label: "Application Activity",
-    },
-    {
       value: "sales-activity",
       label: "Sales Activity",
+    },
+    {
+      value: "application-activity",
+      label: "Application Activity",
     },
     {
       value: "stock-activity",

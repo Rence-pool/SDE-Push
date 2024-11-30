@@ -71,6 +71,7 @@ export default function MakeOrdersheet({ trigger, refresher }) {
     // Filter out the product which is not in stock
     return product.ProductName.toLowerCase().includes(productSearch.toLowerCase()) && product.Product_StockLeft > 0;
   });
+  console.log(initialFetch);
   const handleOnAddProduct = (product) => {
     setCart((prev) => {
       const exist = prev.find((item) => item.P_StockID === product.P_StockID);
