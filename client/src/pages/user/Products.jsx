@@ -7,12 +7,17 @@ import { useParams } from "react-router-dom";
 import CustomSelect from "@/components/customs/CustomSelect";
 import { navigationOptions } from "@/lib/navigation_options";
 import DisplayProduct from "@/components/DisplayProduct";
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 import { AuthContext } from "@/stores/AutProvider";
+import { useEffect } from "react";
 
 export default function Products() {
   const { productCategory } = useParams();
-  const { data, loading, error } = useFetch("http://localhost:3000/api/products/display-user", [], "Error fetching Products");
+  const { data, loading, error, setTriggerRefresh } = useFetch(
+    "http://localhost:3000/api/products/display-user",
+    [],
+    "Error fetching Products",
+  );
 
   const {
     userState: { id },
@@ -22,12 +27,24 @@ export default function Products() {
     data: favoriteData,
     loading: favoriteLoading,
     error: favoriteError,
+    setTriggerRefresh: setFavoriteTriggerRefresh,
   } = useFetch(`http://localhost:3000/api/products/display/favorite/${id}`, [], "Error fetching favorite Products");
-  console.log("favorite Data", favoriteData);
+
+  const dataRefresher = useCallback(() => {
+    setTriggerRefresh((prevState) => !prevState);
+    setFavoriteTriggerRefresh((prevState) => !prevState);
+  }, [setTriggerRefresh, setFavoriteTriggerRefresh]);
+  useEffect(() => {
+    dataRefresher();
+  }, [productCategory, dataRefresher]);
 
   let productData = data?.data || [];
   let favoriteProductData = favoriteData?.data || [];
-
+  if (productCategory === "favorites") {
+    productData = productData.filter((product) =>
+      favoriteProductData.find((favoriteProduct) => favoriteProduct.ProductID === product.ProductID),
+    );
+  }
   const navigate = useNavigate();
   return (
     <main className="flex flex-1 flex-col overflow-hidden rounded-t-2xl bg-white text-black">
@@ -51,7 +68,12 @@ export default function Products() {
               !favoriteError &&
               productData.map((item) => (
                 <li key={item.ProductID} className="flex gap-2">
-                  <DisplayProduct key={item.ProductID} item={item} favoriteProductData={favoriteProductData} />
+                  <DisplayProduct
+                    key={item.ProductID}
+                    item={item}
+                    favoriteProductData={favoriteProductData}
+                    dataRefresher={dataRefresher}
+                  />
                 </li>
               ))}
           </ul>

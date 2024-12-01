@@ -6,8 +6,7 @@ import PropTypes from "prop-types";
 import { AuthContext } from "@/stores/AutProvider";
 import { getCurrentDate, getCurrentTime } from "@/lib/functions";
 
-export default function ToggleFavorite({ isFavorite, productId, variant = "ghost" }) {
-  console.log("isFavorite", isFavorite);
+export default function ToggleFavorite({ isFavorite, productId, variant = "ghost", dataRefresher }) {
   const {
     userState: { id },
   } = useContext(AuthContext);
@@ -24,7 +23,7 @@ export default function ToggleFavorite({ isFavorite, productId, variant = "ghost
       productID: productId,
       time: `${getCurrentDate()} ${getCurrentTime()}`,
     };
-
+    dataRefresher();
     updateFavoriteData(data);
   };
   const [isFavoriteState, setIsFavorite] = useState(false);
@@ -32,8 +31,12 @@ export default function ToggleFavorite({ isFavorite, productId, variant = "ghost
     if (updateFavorite?.data?.affectedRows >= 1) setIsFavorite((prevState) => !prevState);
   }, [updateFavorite, setIsFavorite]);
   useEffect(() => {
-    setIsFavorite((prevState) => !prevState);
-  }, [isFavorite]);
+    if (isFavorite) {
+      setIsFavorite(true);
+    } else {
+      setIsFavorite(false);
+    }
+  }, [isFavorite, dataRefresher]);
   return (
     <>
       {updateFavoriteError && <div className="text-wrap text-xs text-white">{updateFavoriteError?.message}</div>}
@@ -43,7 +46,11 @@ export default function ToggleFavorite({ isFavorite, productId, variant = "ghost
         onClick={handleOnToggleFavorite}
         className="hover:bg-gray-100/50"
       >
-        {updateFavoriteLoading ? <Loader /> : <Heart fill={isFavoriteState ? "red" : "white"} stroke="black" />}
+        {updateFavoriteLoading ? (
+          <Loader size={100} />
+        ) : (
+          <Heart fill={isFavoriteState ? "red" : "white"} stroke={isFavoriteState ? "red" : "black"} size={100} />
+        )}
       </Button>
     </>
   );
@@ -52,4 +59,5 @@ ToggleFavorite.propTypes = {
   productId: PropTypes.string,
   variant: PropTypes.string,
   isFavorite: PropTypes.any,
+  dataRefresher: PropTypes.func,
 };

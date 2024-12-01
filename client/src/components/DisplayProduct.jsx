@@ -4,7 +4,7 @@ import { formatCurrency } from "../lib/functions";
 import { Button } from "./ui/button";
 import PropTypes from "prop-types";
 import ToggleFavorite from "./ToggleFavorite";
-export default function DisplayProduct({ item, favoriteProductData }) {
+export default function DisplayProduct({ item, favoriteProductData, dataRefresher }) {
   const navigate = useNavigate();
 
   const isFavorite = favoriteProductData.find((product) => product.ProductID === item.ProductID);
@@ -29,7 +29,7 @@ export default function DisplayProduct({ item, favoriteProductData }) {
         <Button variant="secondary" type="button" className="flex-1">
           Add To Cart
         </Button>
-        <ToggleFavorite isFavorite={isFavorite} productId={item.ProductID} variant="secondary" />
+        <ToggleFavorite isFavorite={isFavorite} productId={item.ProductID} variant="secondary" dataRefresher={dataRefresher} />
       </div>
     </div>
   );
@@ -37,4 +37,5 @@ export default function DisplayProduct({ item, favoriteProductData }) {
 DisplayProduct.propTypes = {
   item: PropTypes.object,
   favoriteProductData: PropTypes.array,
+  dataRefresher: PropTypes.func,
 };
