@@ -9,8 +9,8 @@ import SalesHistory from "./pages/employee/SalesHistory.jsx";
 import ActivityHistory from "./pages/admin/ActivityHistory.jsx";
 import Orders from "./pages/employee/Orders.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
-import ProductDetails from "./pages/admin/ProductDetails.jsx";
-import ProductInformation from "./pages/user/ProductInformation.jsx";
+
+import ProductDetails from "./pages/user/ProductDetails.jsx";
 import { Toaster } from "@/components/ui/sonner";
 import OrderDetails from "./pages/admin/OrderDetails.jsx";
 import Maintenance from "./pages/admin/Maintenance.jsx";
@@ -35,7 +35,7 @@ export default function App() {
                 <Route index element={<Navigate to="home" />} />
                 <Route path="home" element={<Home />} />
                 <Route path="products/:productCategory" element={<Products />} />
-                <Route path="product/:productId" element={<ProductInformation />} />
+                <Route path="product/:productId" element={<ProductDetails />} />
                 <Route element={<ProtectedRoutes />}>
                   <Route path="cart/:userId" element={<Cart />} />
                 </Route>
@@ -44,7 +44,6 @@ export default function App() {
                 <Route path="/admin" element={<AdminPage />}>
                   <Route index element={<Navigate to="maintenance" />} />
                   <Route path="activity-history" element={<ActivityHistory />} />
-                  {/* <Route path="maintenance/product-details/:productId" element={<ProductDetails />} /> */}
                   <Route path="maintenance/add-product" element={<AddProduct />} />
                   <Route path="maintenance/modify-product/:productId" element={<ModifyProduct />} />
                   <Route path="maintenance" element={<Maintenance />} />
@@ -56,7 +55,7 @@ export default function App() {
                   <Route path="inventory" element={<Inventory />} />
                   <Route path="sales-history" element={<SalesHistory />} />
                   <Route path="activity-history" element={<ActivityHistory />} />
-                  <Route path="inventory/product-details/:productId" element={<ProductDetails />} />
+
                   <Route path="orders/order-details/:orderId" element={<OrderDetails />} />
                 </Route>
               </Route>

@@ -30,6 +30,59 @@ router.get("/fetch", (req, res) => {
 		res.status(200).send({ data: results });
 	});
 });
+router.put('/update/favorite/:productID', (req, res) => {
+		const {
+			id,
+			productID,
+			time,
+		} = req.body;
+	database.query('SELECT * FROM userfavorite WHERE UserID = ? AND ProductID = ?',[id,productID],(err,results)=>{
+		if (err) {
+			console.error("Error fetching products:", err.stack);
+			res.status(500).send({
+				error: "Internal Server Error" + err.stack,
+			});
+			return;
+		}
+		if (results.length === 0) {
+			database.query('INSERT INTO userfavorite (UserID, ProductID, AddedToFavorite) VALUES(?,?,?)',[id,productID,time],(err,results)=>{
+				if (err) {
+					console.error("Error fetching products:", err.stack);
+					res.status(500).send({
+						error: "Internal Server Error" + err.stack,
+					});
+					return;
+				}
+				res.status(200).send({ data: results });
+			});
+		} else {
+			database.query('DELETE FROM userfavorite  WHERE UserID = ? AND ProductID = ?',[id,productID],(err,results)=>{
+				if (err) {
+					console.error("Error fetching products:", err.stack);
+					res.status(500).send({
+						error: "Internal Server Error" + err.stack,
+					});
+					return;
+				}
+				res.status(200).send({ data: results });
+			});
+		}
+	});
+});
+router.get('/display/favorite/:userID', (req, res) => {
+	const {	userID } = req.params;
+	database.query('SELECT * FROM userfavorite WHERE UserID = ?',[userID],(err,results)=>{
+		if (err) {
+			console.error("Error fetching products:", err.stack);
+			res.status(500).send({
+				error: "Internal Server Error" + err.stack,
+			});
+			return;
+		}
+		res.status(200).send({ data: results });
+	});
+
+});
 router.get("/fetch/display", (req, res) => {
 	database.query("SELECT * FROM Products INNER JOIN  StudentPrograms prs ON prs.ProgramID = Products.ProductProgram ;", (err, results) => {
 		if (err) {
@@ -421,4 +474,6 @@ router.put('/update/:valudeID', (req, res) => {
 		});
 	});
 });
+
+
 module.exports = router;

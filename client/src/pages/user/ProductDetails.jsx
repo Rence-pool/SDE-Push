@@ -5,7 +5,7 @@ import CustomSkeleton from "@/components/customs/CustomSkeleton";
 import ToggleFavorite from "@/components/ToggleFavorite";
 
 import ManageDynamicPrice from "@/components/ManageDynamicPrice";
-export default function ProductInformation() {
+export default function ProductDetails() {
   const { productId } = useParams();
 
   const {
@@ -50,7 +50,7 @@ export default function ProductInformation() {
                 <span className="text-xl font-semibold">Available for limited time only</span>
               </div>
               <div className="flex items-center">
-                <ToggleFavorite />
+                <ToggleFavorite productId={productData[0].ProductID} />
               </div>
             </header>
             <ManageDynamicPrice productData={productData} productAttributes={productAttributes} productSizes={productSizes} />
