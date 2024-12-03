@@ -1,10 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "../lib/functions";
-import { Star } from "lucide-react";
+
 import { Button } from "./ui/button";
 import PropTypes from "prop-types";
-export default function DisplayProduct({ item }) {
+import ToggleFavorite from "./ToggleFavorite";
+export default function DisplayProduct({ item, favoriteProductData, dataRefresher }) {
   const navigate = useNavigate();
+
+  const isFavorite = favoriteProductData.find((product) => product.ProductID === item.ProductID);
 
   return (
     <div className="card bg-primary w-[10rem] cursor-pointer text-white shadow-xl hover:ring-2 hover:ring-yellow-500 lg:w-[17rem]">
@@ -26,13 +29,13 @@ export default function DisplayProduct({ item }) {
         <Button variant="secondary" type="button" className="flex-1">
           Add To Cart
         </Button>
-        <Button variant="outline" className="text-black" type="button">
-          {<Star />}
-        </Button>
+        <ToggleFavorite isFavorite={isFavorite} productId={item.ProductID} variant="secondary" dataRefresher={dataRefresher} />
       </div>
     </div>
   );
 }
 DisplayProduct.propTypes = {
   item: PropTypes.object,
+  favoriteProductData: PropTypes.array,
+  dataRefresher: PropTypes.func,
 };
