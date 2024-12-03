@@ -38,9 +38,9 @@ export default function UserPageHeader() {
   return (
     <section className="navbar h-[5rem] gap-2 rounded-2xl">
       <div className="flex gap-2 text-white">
-        <Button variant="ghost" className="h-full min-w-[5rem] max-w-[5rem] flex-1 p-2 hover:bg-gray-800" onClick={() => navigate("home")}>
+        <a variant="ghost" className="h-full min-w-[5rem] max-w-[5rem] flex-1 p-2 hover:bg-transparent transition-transform duration-300 hover:scale-110" onClick={() => navigate("home")}>
           <img src={LOGO} />
-        </Button>
+        </a>
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
