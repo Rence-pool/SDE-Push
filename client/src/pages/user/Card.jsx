@@ -1,7 +1,6 @@
 import {Link} from "react-router-dom";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Limitedph from "../../assets/Cards/LimitedPH.jpg";
 import Prowareph from "../../assets/Cards/ProwarePH.jpg";
 import ICTph from "../../assets/Cards/ICTPH.jpg";
 import BSTMph from "../../assets/Cards/BSTMPH.jpg";
@@ -9,6 +8,7 @@ import BACOMMph from "../../assets/Cards/BACOMMPH.jpg";
 import BSBAph from "../../assets/Cards/BSBAPH.jpg";
 import BSHMph from "../../assets/Cards/BSHMPH.jpg";
 import SHSph from "../../assets/Cards/SHSPH.jpg";
+import UNIFPH from "../../assets/Cards/Uniform.png";
 
 export default function Card() {
   const navigate = useNavigate();
@@ -20,8 +20,8 @@ export default function Card() {
     { id: 4, name: "BSBA", description: "Bachelor of Science in Business Administration", basePrice: 200, image: BSBAph },
     { id: 5, name: "BSHM", description: "Bachelor of Science in Hospitality Management (BSHM)", basePrice: 200, image: BSHMph },
     { id: 6, name: "SHS", description: "Accountancy, Business, and Management (ABM), Science, Technology, Engineering, and Mathematics (STEM), IT in Mobile App and Web Development (ITMAWD)", basePrice: 200, image: SHSph },
-    { id: 7, name: "Proware", description: "Accountancy, Business, and Management (ABM), Science, Technology, Engineering, and Mathematics (STEM), IT in Mobile App and Web Development (ITMAWD)", basePrice: 200, image: Prowareph },
-    { id: 8, name: "Limited Edition Items", description: "Accountancy, Business, and Management (ABM), Science, Technology, Engineering, and Mathematics (STEM), IT in Mobile App and Web Development (ITMAWD)", basePrice: 200, image: Limitedph },
+    { id: 7, name: "Proware", description: "Includes Anniversary Shirts, Lace, Pins, and many more.", basePrice: 200, image: Prowareph },
+    { id: 8, name: "Uniform", description: "Tertiary PE and NSTP", basePrice: 200, image: UNIFPH },
   ]);
 
   
@@ -291,45 +291,133 @@ export default function Card() {
     { name: "APRON", sizes: null, price: 85 },
   ];
 
-  const proware = [
-    {
-        name: "PE Shirt",
-        sizes: [
-          { size: "S", price: 175 },
-          { size: "M", price: 175 },
-          { size: "L", price: 175 },
-          { size: "XL", price: 175 },
-          { size: "3XL", price: 175 },
-          { size: "5XL", price: 195 },
-        ],
-    },
-    { name: "PE Pants", sizes: ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"], price: 310 },
-    {
-        name: "NSTP Shirt",
-        sizes: [
-          { size: "XS", price: 210 },
-          { size: "S", price: 210 },
-          { size: "M", price: 210 },
-          { size: "L", price: 210 },
-          { size: "XL", price: 210 },
-          { size: "2XL", price: 230 },
-          { size: "3XL", price: 230 },
-          { size: "5XL", price: 250 },
-        ],
-    },  
+  const Mproware = [
     {
         name: "Washday Shirt",
         sizes: [
-          { size: "XS", price: 0 },
-          { size: "S", price: 0 },
-          { size: "M", price: 0 },
-          { size: "L", price: 0 },
-          { size: "XL", price: 0 },
-          { size: "2XL", price: 0 },
-          { size: "3XL", price: 0 },
-          { size: "5XL", price: 0 },
+          { size: "S", price: 220 },
+          { size: "M", price: 220 },
+          { size: "L", price: 220 },
+          { size: "XL", price: 220 },
+          { size: "2XL", price: 220 },
+          { size: "3XL", price: 220 },
+          { size: "5XL", price: 245 },
         ],
     }, 
+    {
+      name: "39th Anniversary Shirt",
+      sizes: [
+        { size: "S", price: 220 },
+        { size: "M", price: 220 },
+        { size: "L", price: 220 },
+        { size: "XL", price: 220 },
+        { size: "2XL", price: 220 },
+        { size: "3XL", price: 220 },
+        { size: "5XL", price: 245 },
+      ],
+    }, 
+    {
+      name: "40th Anniversary Shirt",
+      sizes: [
+        { size: "S", price: 220 },
+        { size: "M", price: 220 },
+        { size: "L", price: 220 },
+        { size: "XL", price: 220 },
+        { size: "2XL", price: 220 },
+        { size: "3XL", price: 220 },
+        { size: "5XL", price: 245 },
+      ],
+    }, 
+    {
+      name: "41st Anniversary Shirt",
+      sizes: [
+        { size: "S", price: 220 },
+        { size: "M", price: 220 },
+        { size: "L", price: 220 },
+        { size: "XL", price: 220 },
+        { size: "2XL", price: 220 },
+        { size: "3XL", price: 220 },
+        { size: "5XL", price: 245 },
+      ],
+    }, 
+  ];
+  const Fproware = [
+    {
+        name: "Washday Shirt",
+        sizes: [
+          { size: "S", price: 220 },
+          { size: "M", price: 220 },
+          { size: "L", price: 220 },
+          { size: "XL", price: 220 },
+          { size: "2XL", price: 220 },
+          { size: "3XL", price: 220 },
+          { size: "5XL", price: 245 },
+        ],
+    }, 
+    {
+      name: "39th Anniversary Shirt",
+      sizes: [
+        { size: "S", price: 220 },
+        { size: "M", price: 220 },
+        { size: "L", price: 220 },
+        { size: "XL", price: 220 },
+        { size: "2XL", price: 220 },
+        { size: "3XL", price: 220 },
+        { size: "5XL", price: 245 },
+      ],
+    }, 
+    {
+      name: "40th Anniversary Shirt",
+      sizes: [
+        { size: "S", price: 220 },
+        { size: "M", price: 220 },
+        { size: "L", price: 220 },
+        { size: "XL", price: 220 },
+        { size: "2XL", price: 220 },
+        { size: "3XL", price: 220 },
+        { size: "5XL", price: 245 },
+      ],
+    }, 
+    {
+      name: "41st Anniversary Shirt",
+      sizes: [
+        { size: "S", price: 220 },
+        { size: "M", price: 220 },
+        { size: "L", price: 220 },
+        { size: "XL", price: 220 },
+        { size: "2XL", price: 220 },
+        { size: "3XL", price: 220 },
+        { size: "5XL", price: 245 },
+      ],
+    }, 
+  ];
+
+  const uniform = [
+    {
+      name: "PE Shirt",
+      sizes: [
+        { size: "S", price: 175 },
+        { size: "M", price: 175 },
+        { size: "L", price: 175 },
+        { size: "XL", price: 175 },
+        { size: "3XL", price: 175 },
+        { size: "5XL", price: 195 },
+      ],
+  },
+  { name: "PE Pants", sizes: ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"], price: 310 },
+  {
+      name: "NSTP Shirt",
+      sizes: [
+        { size: "XS", price: 210 },
+        { size: "S", price: 210 },
+        { size: "M", price: 210 },
+        { size: "L", price: 210 },
+        { size: "XL", price: 210 },
+        { size: "2XL", price: 230 },
+        { size: "3XL", price: 230 },
+        { size: "5XL", price: 250 },
+      ],
+  },  
   ];
 
   const choicesMap = {
@@ -339,7 +427,8 @@ export default function Card() {
     BSBA: { male: bsbaMaleChoices, female: bsbaFemaleChoices },
     BSHM: { male: bshmMaleChoices, female: bshmFemaleChoices },
     SHS: { male: shsMaleChoices, female: shsFemaleChoices },
-    Proware: {male :proware}
+    Proware: {male :Mproware, female: Fproware},
+    Uniform: {male :uniform, female: uniform},
   };
 
 
@@ -384,61 +473,63 @@ export default function Card() {
 
   
 
+  const [showBuyNowModal, setShowBuyNowModal] = useState(false);
+
   const handleConfirmOrder = () => {
     if (selectedItems.length > 0) {
-      // Use the current user's ID from AuthContext
-      navigate(`/cart/${id}`, { 
-        state: { 
-          selectedItems: selectedItems.map(item => ({
-            ...item,
-            productName: selectedProduct.name,
-            gender: gender
-          })),
-          timestamp: Date.now() 
-        } 
-      });
+      if (isBuyNow) {
+        setShowBuyNowModal(true);
+      } else {
+        navigate('/cart/12', {
+          state: {
+            selectedItems: selectedItems.map(item => ({
+              ...item,
+              productName: selectedProduct.name,
+              gender: gender
+            })),
+            timestamp: Date.now()
+          }
+        });
+      }
+      setShowCartModal(false);
+    } else {
+      alert("Please select at least one item");
     }
-    setShowCartModal(false);
   };
-
   
   return (
     <div className="container mx-auto p-4">
-  <h1 className="text-2xl font-bold mb-4 text-white">Products</h1>
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-    {products.map((product) => (
-      <div key={product.id} className="card shadow-xl text-black bg-gray-200">
-        <Link to={`/products/${product.id}`}>
-          <figure>
-            <img src={product.image} alt={product.name} className="object-cover" />
-          </figure>
-        </Link>
-        <div className="card-body">
-          <h2 className="card-title text-black">{product.name}</h2>
-          <p className="text-black">{product.description}</p>
-          <div className="flex space-x-2 mt-2">
-            <button
-              className="btn btn-outline mt-4"
-              onClick={() => handleSelectProduct(product)}
-            >
-              Add to Cart
-            </button>
-            <button
-              className="btn btn-primary mt-4"
-              onClick={() => handleSelectProduct(product, true)}
-            >
-              Buy Now
-            </button>
+      <h1 className="text-2xl font-bold mb-4 text-white">Products</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {products.map((product) => (
+          <div key={product.id} className="card shadow-xl text-black bg-gray-200">
+            <Link to={`/products/${product.id}`}>
+              <figure>
+                <img src={product.image} alt={product.name} className="object-cover" />
+              </figure>
+            </Link>
+            <div className="card-body">
+              <h2 className="card-title text-black">{product.name}</h2>
+              <p className="text-black">{product.description}</p>
+              <div className="flex space-x-2 mt-2">
+                <button
+                  className="btn btn-outline mt-4"
+                  onClick={() => handleSelectProduct(product)}
+                >
+                  Add to Cart
+                </button>
+                <button
+                  className="btn btn-primary mt-4"
+                  onClick={() => handleSelectProduct(product, true)}
+                >
+                  Buy Now
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        ))}
       </div>
-    ))}
-  </div>
-
-    
-
-
-
+  
       {showCartModal && selectedProduct && (
         <div className="modal modal-open">
           <div className="modal-box">
@@ -457,8 +548,7 @@ export default function Card() {
                 Female
               </button>
             </div>
-            
-
+  
             {gender && (
               <div className="mt-4">
                 <h3 className="font-bold text-lg text-black">Select Items</h3>
@@ -474,7 +564,7 @@ export default function Card() {
                             const selectedPrice = typeof item.sizes[0] === "string"
                               ? item.price
                               : item.sizes.find((s) => s.size === selectedSize).price;
-
+  
                             handleItemChange(item, selectedSize, selectedPrice, true);
                           }}
                         >
@@ -496,7 +586,9 @@ export default function Card() {
                           <input
                             type="checkbox"
                             className="checkbox mt-2"
-                            onChange={(e) => handleItemChange(item, "", item.price, e.target.checked)}
+                            onChange={(e) =>
+                              handleItemChange(item, "", item.price, e.target.checked)
+                            }
                           />
                           <span className="ml-2 text-black">₱{item.price}</span>
                         </div>
@@ -506,12 +598,11 @@ export default function Card() {
                 </div>
               </div>
             )}
-
-            
-
+  
             <div className="modal-action">
               <div className="total-amount text-lg font-semibold mr-24 mt-4">
-                Total Amount: ₱{selectedItems.reduce((sum, item) => sum + item.price, 0).toFixed(2)}
+                Total Amount: ₱
+                {selectedItems.reduce((sum, item) => sum + item.price, 0).toFixed(2)}
               </div>
               <button className="btn btn-secondary mt-4" onClick={handleConfirmOrder}>
                 Confirm
@@ -523,8 +614,40 @@ export default function Card() {
           </div>
         </div>
       )}
-
-      
+  
+      {showBuyNowModal && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg text-black">Confirm Order</h3>
+            <p className="py-4 text-black">
+              The order will be voided if not purchased within the next 24 hours.
+            </p>
+            <div className="modal-action">
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  navigate("/checkout", {
+                    state: {
+                      selectedItems: selectedItems.map((item) => ({
+                        ...item,
+                        productName: selectedProduct.name,
+                        gender: gender,
+                      })),
+                      timestamp: Date.now(),
+                    },
+                  });
+                  setShowBuyNowModal(false);
+                }}
+              >
+                Proceed to Checkout
+              </button>
+              <button className="btn" onClick={() => setShowBuyNowModal(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

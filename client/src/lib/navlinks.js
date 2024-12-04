@@ -1,4 +1,3 @@
-// navlinks.js
 import {
   ShoppingCart,
   Bed,
@@ -13,7 +12,6 @@ import {
   LucideDrumstick,
 } from "lucide-react";
 
-// Create and export the navLinks array
 export const navLinks = [
   {
     label: "All Products Available",
